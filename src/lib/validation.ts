@@ -2,6 +2,8 @@
 
 const NAME_ALLOWED = /^[\p{L}\p{M}\s'.-]+$/u;
 
+export type PhoneCountry = "KE" | "SS";
+
 export function validateName(raw: string): string | null {
   const v = raw.trim().replace(/\s+/g, " ");
   if (!v) return "Please enter your full legal name.";
@@ -13,36 +15,64 @@ export function validateName(raw: string): string | null {
   return null;
 }
 
-export function normalizePhone(raw: string): string | null {
-  const digits = raw.replace(/[^\d+]/g, "");
-  if (!digits) return null;
-
-  // Handle leading +, or local prefixes
-  let n = digits;
-  if (n.startsWith("00")) n = "+" + n.slice(2);
-  if (n.startsWith("0") && !n.startsWith("+")) {
-    // Local format: assume South Sudan by default
-    n = "+211" + n.slice(1);
-  } else if (!n.startsWith("+")) {
-    // No prefix  assume South Sudan
-    n = "+211" + n;
-  }
-
-  const bare = n.replace(/\D/g, "");
-  if (bare.length < 10 || bare.length > 15) return null;
-  return "+" + bare;
+/** Title Case for storage: JOHN MAE / john mae → John Mae. Keeps hyphens and apostrophes. */
+export function normalizeDisplayName(raw: string): string {
+  const v = raw.trim().replace(/\s+/g, " ");
+  const word = (w: string) =>
+    w
+      .split("'")
+      .map((p) => (p ? p.charAt(0).toUpperCase() + p.slice(1).toLowerCase() : p))
+      .join("'");
+  return v
+    .split(" ")
+    .map((part) => part.split("-").map(word).join("-"))
+    .join(" ");
 }
 
-export function validatePhone(raw: string): string | null {
+function digitsOnly(raw: string): string {
+  let n = raw.trim().replace(/[^\d+]/g, "");
+  if (n.startsWith("00")) n = n.slice(2);
+  if (n.startsWith("+")) n = n.slice(1);
+  return n.replace(/\D/g, "");
+}
+
+export function normalizeJoinPhone(raw: string, country: PhoneCountry): string | null {
+  const d = digitsOnly(raw);
+  if (!d) return null;
+
+  if (country === "KE") {
+    if (d.length === 10 && /^0[17]\d{8}$/.test(d)) return "+254" + d.slice(1);
+    if (d.length === 12 && /^254[17]\d{8}$/.test(d)) return "+" + d;
+    if (d.length === 9 && /^[17]\d{8}$/.test(d)) return "+254" + d;
+    return null;
+  }
+
+  // South Sudan: +211 + 9-digit national number starting with 9
+  if (d.length === 10 && /^09\d{8}$/.test(d)) return "+211" + d.slice(1);
+  if (d.length === 12 && /^2119\d{8}$/.test(d)) return "+" + d;
+  if (d.length === 9 && /^9\d{8}$/.test(d)) return "+211" + d;
+  return null;
+}
+
+export function validateJoinPhone(raw: string, country: PhoneCountry): string | null {
   const v = raw.trim();
   if (!v) return "Please enter your phone number.";
   if (/[a-zA-Z]/.test(v)) return "Phone numbers can't contain letters.";
-  const normalized = normalizePhone(v);
-  if (!normalized) return "Enter a valid phone number (e.g., +211 912 345 678).";
-  const digits = normalized.replace(/\D/g, "");
-  if (digits.length < 10) return "That number looks too short. Please check and try again.";
-  if (digits.length > 15) return "That number looks too long. Please check and try again.";
+  if (!normalizeJoinPhone(v, country)) {
+    return country === "KE"
+      ? "Enter a Kenyan number (e.g. 0712345678 or +254712345678)."
+      : "Enter a South Sudan number (e.g. 0912345678 or +211912345678).";
+  }
   return null;
+}
+
+/** @deprecated Use normalizeJoinPhone with an explicit country. */
+export function normalizePhone(raw: string): string | null {
+  return normalizeJoinPhone(raw, "SS") ?? normalizeJoinPhone(raw, "KE");
+}
+
+export function validatePhone(raw: string): string | null {
+  return validateJoinPhone(raw, "SS");
 }
 
 export function validateEmail(raw: string): string | null {
@@ -158,23 +188,20 @@ export function toMpesaApiFormat(raw: string): string | null {
 // Dynamic input cap for the M-Pesa phone field.
 // Returns the max characters allowed based on what the user is typing.
 export function mpesaPhoneMaxLength(raw: string): number {
-  const v = raw.replace(/\s/g, "");
+  const v = raw.replace(/[\s\-()]/g, "");
 
-  // International with +
-  if (v.startsWith("+2547") || v.startsWith("+2541")) return 13; // +2547XXXXXXXX = 13
-  if (v.startsWith("+254")) return 4;                              // still typing country code
+  // Local Kenyan: 0...  cap at 10 (covers 07... and 01...)
+  if (v.startsWith("0")) return 10;
 
-  // International without +
-  if (v.startsWith("2547") || v.startsWith("2541")) return 12;
-  if (v.startsWith("254")) return 3;                               // still typing
+  // International with +  cap at 13 (+254 + 9 digits)
+  if (v.startsWith("+")) return 13;
 
-  // Local
-  if (v.startsWith("07") || v.startsWith("01")) return 10;
+  // International without +  254 + 9 digits = 12
+  if (v.startsWith("254")) return 12;
 
-  // Nothing recognized yet  allow up to 13 to give room for +254
+  // Still typing toward + or 254 (e.g. "2", "25")  grace cap
   return 13;
 }
-
 // Truncate input to the maximum allowed length for its prefix.
 export function capMpesaPhone(raw: string): string {
   const v = raw.replace(/[\s\-()]/g, "");

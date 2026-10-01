@@ -7,6 +7,7 @@ import {
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import StatCounter from "@/components/home/StatCounter";
+import CardDeck from "@/components/home/CardDeck";
 
 const PILLARS_MANIFESTO = [
   { n: "01", t: "Unite the Nation", d: "Heal the past. End tribalism. One South Sudan." },
@@ -137,9 +138,7 @@ export default function Home() {
       <section className="bg-white py-20">
         <div className="container-x grid gap-12 lg:grid-cols-12 lg:items-center">
           <div className="lg:col-span-5">
-            <div className="relative aspect-[3/4] overflow-hidden rounded-3xl shadow-2xl">
-              <Image src="/images/poster-plate-1.jpg" alt="Official Campaign Poster" fill className="object-cover" />
-            </div>
+            <CardDeck />
           </div>
           <div className="lg:col-span-7">
             <div className="text-xs font-semibold uppercase tracking-[0.25em] text-gold">About the Candidate</div>
@@ -158,18 +157,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* 4 Leadership pillars */}
-        <div className="container-x mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {LEADERSHIP.map(({ icon: Icon, t, d }) => (
-            <div key={t} className="card-elevated">
-              <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-green-light text-green-deep">
-                <Icon className="h-6 w-6" />
-              </div>
-              <h3 className="font-display text-lg font-bold text-green-deep">{t}</h3>
-              <p className="mt-2 text-sm text-ink/70">{d}</p>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* MANIFESTO PREVIEW */}

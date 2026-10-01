@@ -30,3 +30,22 @@
   }
   .flag-stripe { @apply h-1 w-full bg-flag-ribbon; }
 }
+
+@keyframes shine {
+  0% {
+    transform: translateX(-200%) translateY(-200%) rotate(0deg);
+  }
+  100% {
+    transform: translateX(200%) translateY(200%) rotate(0deg);
+  }
+}
+
+.animate-shine {
+  animation: shine 3.5s ease-in-out infinite;
+}
+
+@keyframes rotate-conic {
+  to {
+    transform: rotate(360deg);
+  }
+}

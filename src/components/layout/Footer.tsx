@@ -23,11 +23,11 @@ export default function Footer() {
             </div>
           </div>
           <div>
-            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gold">Movement</h4>
+            <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gold">Analytics</h4>
             <ul className="space-y-2 text-sm text-white/80">
               <li><Link href="/about" className="hover:text-gold">Biography</Link></li>
               <li><Link href="/manifesto" className="hover:text-gold">Manifesto</Link></li>
-              <li><Link href="/analytics" className="hover:text-gold">Movement</Link></li>
+              <li><Link href="/analytics" className="hover:text-gold">Analytics</Link></li>
               <li><Link href="/media" className="hover:text-gold">Press &amp; Media</Link></li>
               <li><Link href="/gallery" className="hover:text-gold">Gallery</Link></li>
             </ul>

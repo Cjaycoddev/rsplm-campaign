@@ -7,9 +7,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Heart } from "lucide-react";
 
 const links = [
+  { href: "/", label: "Home" },
   { href: "/about", label: "About" },
   { href: "/manifesto", label: "Manifesto" },
-  { href: "/analytics", label: "Movement" },
+  { href: "/analytics", label: "Analytics" },
   { href: "/media", label: "Media" },
   { href: "/gallery", label: "Gallery" },
   { href: "/join", label: "Join Us" },
@@ -61,9 +62,9 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="flag-stripe fixed top-0 z-50" />
+      <div className="flag-stripe fixed top-0 z-[9999]" />
 
-      <header className={`fixed top-1 z-40 w-full transition-all duration-300 ${scrolled || open ? "bg-green-forest/95 shadow-lg backdrop-blur-md" : "bg-transparent"}`}>
+      <header className={`fixed top-1 z-[9998] w-full transition-all duration-300 ${scrolled || open ? "bg-green-forest/95 shadow-lg backdrop-blur-md" : "bg-transparent"}`}>
         <nav className="container-x flex h-20 items-center justify-between">
           <Link href="/" className="relative z-50 flex items-center gap-3">
             <Image src="/logo.png" alt="R-SPLM/F" width={48} height={48} className="rounded-full bg-white p-0.5" />
@@ -80,9 +81,19 @@ export default function Navbar() {
                 <Link
                   key={l.href}
                   href={l.href}
-                  className={`relative text-sm font-medium transition-colors ${active ? "text-gold" : "text-white/90 hover:text-gold"}`}
+                  className={`group relative text-sm font-medium transition-colors ${
+                    active ? "text-gold" : "text-white/90 hover:text-gold"
+                  }`}
                 >
                   {l.label}
+
+                  {/* Hover underline  grows from center */}
+                  <span
+                    className="pointer-events-none absolute -bottom-1.5 left-0 right-0 h-0.5 origin-center scale-x-0 rounded-full bg-gold transition-transform duration-300 ease-out group-hover:scale-x-100"
+                    aria-hidden="true"
+                  />
+
+                  {/* Active-page underline  slides between links */}
                   {active && (
                     <motion.span
                       layoutId="nav-underline"
@@ -140,7 +151,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[9996] bg-black/50 backdrop-blur-sm lg:hidden"
               onClick={() => setOpen(false)}
             />
 
@@ -150,7 +161,7 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={drawerTransition}
-              className="fixed right-0 top-0 z-40 h-screen w-[85%] max-w-sm overflow-y-auto bg-green-forest shadow-2xl lg:hidden"
+              className="fixed right-0 top-0 z-[9997] h-screen w-[85%] max-w-sm overflow-y-auto bg-green-forest shadow-2xl lg:hidden"
               role="dialog"
               aria-modal="true"
               aria-label="Navigation menu"

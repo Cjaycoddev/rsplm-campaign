@@ -25,19 +25,23 @@ export default function DonatePage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-ivory pb-20 pt-32">
-        <div className="container-x max-w-3xl">
-          <div className="mb-12 text-center">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gold/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
+      <main className="min-h-screen bg-ivory pb-20">
+        {/* Dark hero  fixes navbar contrast */}
+        <section className="bg-hero-gradient pb-14 pt-32">
+          <div className="container-x max-w-3xl text-center">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold">
               <Heart className="h-3 w-3" fill="currentColor" /> Fuel the Movement
             </div>
-            <h1 className="font-display text-4xl font-bold text-green-deep sm:text-5xl">
+            <h1 className="font-display text-4xl font-bold text-white sm:text-5xl">
               Contribute to the Future
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-ink/70">
+            <p className="mx-auto mt-4 max-w-xl text-white/80">
               Every contribution powers our mission to unite, reform, and rebuild South Sudan.
             </p>
           </div>
+        </section>
+
+        <div className="container-x max-w-3xl -mt-6">
 
           <div className="mb-10 flex items-center justify-center gap-3">
             {steps.map((s, i) => (

@@ -3,21 +3,33 @@
 import { useState } from "react";
 import { Check, ArrowRight, ArrowLeft, User, Phone, Mail, Briefcase, AlertCircle } from "lucide-react";
 import { STATES, STATE_LIST, ROLES, type Role } from "@/lib/states";
-import { validateName, validatePhone, validateEmail, validateState, validateCounty, validateRole } from "@/lib/validation";
+import {
+  validateName,
+  validateJoinPhone,
+  validateEmail,
+  validateState,
+  validateCounty,
+  validateRole,
+  type PhoneCountry,
+} from "@/lib/validation";
 
 type Errors = Partial<Record<"name" | "phone" | "email" | "state" | "county" | "role", string>>;
 
 export default function JoinForm() {
   const [step, setStep] = useState(1);
   const [name, setName] = useState("");
+  const [phoneCountry, setPhoneCountry] = useState<PhoneCountry>("SS");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [emailOptIn, setEmailOptIn] = useState(true);
   const [state, setState] = useState("");
   const [county, setCounty] = useState("");
   const [role, setRole] = useState<Role | null>(null);
   const [errors, setErrors] = useState<Errors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [done, setDone] = useState<{ displayName: string } | null>(null);
   const [honeypot, setHoneypot] = useState("");
   const [formLoadedAt] = useState(() => Date.now());
 
@@ -28,15 +40,16 @@ export default function JoinForm() {
     for (const f of fields) {
       let err: string | null = null;
       if (f === "name") err = validateName(name);
-      else if (f === "phone") err = validatePhone(phone);
+      else if (f === "phone") err = validateJoinPhone(phone, phoneCountry);
       else if (f === "email") err = validateEmail(email);
       else if (f === "state") err = validateState(state);
       else if (f === "county") err = validateCounty(county);
       else if (f === "role") err = validateRole(role ?? "");
-      if (err) next[f] = err; else delete next[f];
+      if (err) next[f] = err;
+      else delete next[f];
     }
     setErrors(next);
-    return Object.keys(next).length === 0;
+    return fields.every((f) => !next[f]);
   };
 
   const blur = (field: keyof Errors) => {
@@ -44,36 +57,68 @@ export default function JoinForm() {
     runValidate([field]);
   };
 
-  const step1Valid = !validateName(name) && !validatePhone(phone) && !validateEmail(email);
+  const step1Valid = !validateName(name) && !validateJoinPhone(phone, phoneCountry) && !validateEmail(email);
   const step2Valid = !validateState(state) && !validateCounty(county);
   const step3Valid = !validateRole(role ?? "");
 
-  const goStep2 = () => { if (runValidate(["name", "phone", "email"])) setStep(2); };
-  const goStep3 = () => { if (runValidate(["state", "county"])) setStep(3); };
+  const goStep2 = () => {
+    if (runValidate(["name", "phone", "email"])) setStep(2);
+  };
+  const goStep3 = () => {
+    if (runValidate(["state", "county"])) setStep(3);
+  };
 
   const submit = async () => {
-    // Anti-bot: honeypot must be empty
     if (honeypot.trim() !== "") return;
-    // Anti-bot: humans take >2s to fill a form
     if (Date.now() - formLoadedAt < 2000) return;
-
     if (!runValidate(["name", "phone", "email", "state", "county", "role"])) return;
     setSubmitting(true);
+    setSubmitError(null);
     try {
-      // TODO: POST to /api/join when backend is wired
-      await new Promise((r) => setTimeout(r, 600));
-      alert(
-        "Registration captured.\n\n" +
-          JSON.stringify({ name, phone, email, state, county, role }, null, 2)
-      );
+      const res = await fetch("/api/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          phoneCountry,
+          email,
+          emailOptIn,
+          state,
+          county,
+          role,
+          hp: honeypot,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSubmitError(data.error || "Could not complete registration.");
+        return;
+      }
+      setDone({ displayName: data.displayName || name });
+    } catch {
+      setSubmitError("Network error. Check your connection and try again.");
     } finally {
       setSubmitting(false);
     }
   };
 
+  if (done) {
+    return (
+      <div className="rounded-3xl border border-green-deep/10 bg-white p-8 text-center shadow-card">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-deep text-white">
+          <Check className="h-7 w-7" />
+        </div>
+        <h2 className="mt-4 font-display text-2xl font-bold text-green-deep">You are registered</h2>
+        <p className="mt-2 text-ink/70">
+          Thank you, {done.displayName}. You have been assigned to your local coordination committee.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-3xl border border-green-deep/10 bg-white p-6 shadow-card sm:p-8">
-      {/* Honeypot  bots fill this, humans don't see it */}
       <input
         type="text"
         name="hp_website"
@@ -84,7 +129,6 @@ export default function JoinForm() {
         aria-hidden="true"
         style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
       />
-      {/* Progress */}
       <div className="mb-8 flex items-center justify-center gap-3">
         {[1, 2, 3].map((n) => (
           <div key={n} className="flex items-center gap-3">
@@ -104,7 +148,7 @@ export default function JoinForm() {
         <div className="space-y-5">
           <div>
             <h2 className="font-display text-2xl font-bold text-green-deep">Tell us about you</h2>
-            <p className="mt-1 text-sm text-ink/60">Basic details so we can reach you.</p>
+            <p className="mt-1 text-sm text-ink/60">Names are saved in a consistent format. Choose Kenya or South Sudan for your number.</p>
           </div>
 
           <Field
@@ -116,18 +160,44 @@ export default function JoinForm() {
             placeholder="Nathaniel Garang Aduotdit"
             error={touched.name ? errors.name : undefined}
           />
+
+          <div>
+            <label className="text-sm font-medium text-ink/70">Phone country</label>
+            <div className="mt-1 flex gap-1 rounded-full bg-ink/5 p-1">
+              {([
+                ["SS", "South Sudan +211"],
+                ["KE", "Kenya +254"],
+              ] as const).map(([code, label]) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => {
+                    setPhoneCountry(code);
+                    setTouched({ ...touched, phone: true });
+                    setTimeout(() => runValidate(["phone"]), 0);
+                  }}
+                  className={`flex-1 rounded-full px-3 py-2 text-xs font-semibold sm:text-sm ${
+                    phoneCountry === code ? "bg-white text-green-deep shadow" : "text-ink/50"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <Field
             icon={<Phone className="h-4 w-4" />}
             label="Phone Number"
             value={phone}
             onChange={setPhone}
             onBlur={() => blur("phone")}
-            placeholder="+211 912 345 678"
+            placeholder={phoneCountry === "KE" ? "0712 345 678" : "0912 345 678"}
             error={touched.phone ? errors.phone : undefined}
           />
           <Field
             icon={<Mail className="h-4 w-4" />}
-            label="Email (optional  recommended for receipts)"
+            label="Email (needed for updates and receipts)"
             value={email}
             onChange={setEmail}
             onBlur={() => blur("email")}
@@ -135,13 +205,20 @@ export default function JoinForm() {
             type="email"
             error={touched.email ? errors.email : undefined}
           />
+          {email.trim() && (
+            <label className="flex items-start gap-2 text-sm text-ink/70">
+              <input
+                type="checkbox"
+                checked={emailOptIn}
+                onChange={(e) => setEmailOptIn(e.target.checked)}
+                className="mt-1"
+              />
+              Email me thank-you notes and campaign updates. You can opt out later.
+            </label>
+          )}
 
           <div className="flex justify-end pt-2">
-            <button
-              onClick={goStep2}
-              disabled={!step1Valid}
-              className="btn-gold disabled:cursor-not-allowed disabled:opacity-40"
-            >
+            <button onClick={goStep2} disabled={!step1Valid} className="btn-gold disabled:cursor-not-allowed disabled:opacity-40">
               Continue <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -159,14 +236,21 @@ export default function JoinForm() {
             <label className="text-sm font-medium text-ink/70">State of Residence</label>
             <select
               value={state}
-              onChange={(e) => { setState(e.target.value); setCounty(""); }}
+              onChange={(e) => {
+                setState(e.target.value);
+                setCounty("");
+              }}
               onBlur={() => blur("state")}
               className={`mt-1 w-full rounded-xl border-2 bg-white px-4 py-3 outline-none transition-colors focus:border-gold ${
                 touched.state && errors.state ? "border-campaignred" : "border-ink/10"
               }`}
             >
               <option value="">Select a state</option>
-              {STATE_LIST.map((s) => <option key={s} value={s}>{s}</option>)}
+              {STATE_LIST.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
             {touched.state && errors.state && <FieldError msg={errors.state} />}
           </div>
@@ -183,7 +267,11 @@ export default function JoinForm() {
               }`}
             >
               <option value="">{state ? "Select a county" : "Select a state first"}</option>
-              {counties.map((c) => <option key={c} value={c}>{c}</option>)}
+              {counties.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
             </select>
             {touched.county && errors.county && <FieldError msg={errors.county} />}
           </div>
@@ -192,11 +280,7 @@ export default function JoinForm() {
             <button onClick={() => setStep(1)} className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink/60 hover:text-green-deep">
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
-            <button
-              onClick={goStep3}
-              disabled={!step2Valid}
-              className="btn-gold disabled:cursor-not-allowed disabled:opacity-40"
-            >
+            <button onClick={goStep3} disabled={!step2Valid} className="btn-gold disabled:cursor-not-allowed disabled:opacity-40">
               Continue <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -216,7 +300,15 @@ export default function JoinForm() {
               return (
                 <button
                   key={r.id}
-                  onClick={() => { setRole(r.id); setTouched({ ...touched, role: true }); setErrors((e) => { const c = { ...e }; delete c.role; return c; }); }}
+                  onClick={() => {
+                    setRole(r.id);
+                    setTouched({ ...touched, role: true });
+                    setErrors((e) => {
+                      const c = { ...e };
+                      delete c.role;
+                      return c;
+                    });
+                  }}
                   className={`flex w-full items-start gap-4 rounded-2xl border-2 p-4 text-left transition-all ${
                     selected ? "border-gold bg-gold/5 shadow-gold" : "border-ink/10 hover:border-gold/50 hover:shadow-card"
                   }`}
@@ -233,16 +325,13 @@ export default function JoinForm() {
             })}
           </div>
           {touched.role && errors.role && <FieldError msg={errors.role} />}
+          {submitError && <FieldError msg={submitError} />}
 
           <div className="flex justify-between pt-2">
             <button onClick={() => setStep(2)} className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-ink/60 hover:text-green-deep">
               <ArrowLeft className="h-4 w-4" /> Back
             </button>
-            <button
-              onClick={submit}
-              disabled={!step3Valid || submitting}
-              className="btn-gold disabled:cursor-not-allowed disabled:opacity-40"
-            >
+            <button onClick={submit} disabled={!step3Valid || submitting} className="btn-gold disabled:cursor-not-allowed disabled:opacity-40">
               {submitting ? "Submitting..." : "Complete Registration"}
             </button>
           </div>
@@ -253,7 +342,14 @@ export default function JoinForm() {
 }
 
 function Field({
-  icon, label, value, onChange, onBlur, placeholder, type = "text", error,
+  icon,
+  label,
+  value,
+  onChange,
+  onBlur,
+  placeholder,
+  type = "text",
+  error,
 }: {
   icon: React.ReactNode;
   label: string;

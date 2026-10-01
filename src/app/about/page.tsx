@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Quote, ArrowRight, Award, Calendar, MapPin, Newspaper, User, Heart, ExternalLink } from "lucide-react";
+import { Quote, ArrowRight, Award, Calendar, MapPin, Newspaper, User, Heart, HeartHandshake, ExternalLink } from "lucide-react";
+
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Timeline from "@/components/about/Timeline";
+import InternationalRecognition from "@/components/about/InternationalRecognition";
 import { QUICK_FACTS, STORY_PARAGRAPHS, AWARD, PRESS } from "@/lib/biography";
 
 export const metadata = {
@@ -70,8 +72,8 @@ export default function AboutPage() {
         <div className="container-x grid gap-12 lg:grid-cols-12 lg:items-start">
           <div className="lg:col-span-5">
             <div className="sticky top-28">
-              <div className="relative aspect-[3/4] overflow-hidden rounded-3xl shadow-2xl">
-                <Image src="/images/poster-plate-1.jpg" alt="Official Campaign Poster" fill className="object-cover" />
+              <div className="relative aspect-[904/1280] overflow-hidden rounded-3xl shadow-2xl">
+                <Image src="/images/poster-plate-1_opt.jpg" alt="Official Campaign Poster" fill className="object-contain" />
               </div>
             </div>
           </div>
@@ -94,57 +96,9 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-green-deep py-20 text-white">
-        <div className="container-x">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-gold">
-              <Award className="h-3 w-3" /> International Recognition
-            </div>
-            <h2 className="font-display text-3xl font-bold sm:text-4xl lg:text-5xl">{AWARD.title}</h2>
-            <p className="mt-3 text-base italic text-gold">{AWARD.subtitle}</p>
-          </div>
-          <div className="mx-auto mt-12 max-w-4xl rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm sm:p-10">
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="flex items-start gap-3">
-                <Calendar className="mt-1 h-5 w-5 flex-shrink-0 text-gold" />
-                <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-gold">Date</div>
-                  <div className="mt-1 text-sm font-semibold">{AWARD.date}</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <MapPin className="mt-1 h-5 w-5 flex-shrink-0 text-gold" />
-                <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-gold">Location</div>
-                  <div className="mt-1 text-sm font-semibold">{AWARD.location}</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Award className="mt-1 h-5 w-5 flex-shrink-0 text-gold" />
-                <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-gold">Conferred By</div>
-                  <div className="mt-1 text-sm font-semibold">{AWARD.conferredBy}</div>
-                  <div className="mt-0.5 text-xs text-white/60">{AWARD.affiliatedWith}</div>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <User className="mt-1 h-5 w-5 flex-shrink-0 text-gold" />
-                <div>
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-gold">Hosted By</div>
-                  <div className="mt-1 text-sm font-semibold">{AWARD.host}</div>
-                </div>
-              </div>
-            </div>
-            <div className="mt-8 space-y-4 border-t border-white/10 pt-8 text-sm leading-relaxed text-white/80">
-              {AWARD.paragraphs.map((p, i) => <p key={i}>{p}</p>)}
-            </div>
-            <div className="mt-8 rounded-2xl border-l-4 border-gold bg-white/5 p-5">
-              <blockquote className="font-display text-base font-bold italic sm:text-lg">&ldquo;{AWARD.quote}&rdquo;</blockquote>
-              <div className="mt-2 text-xs font-semibold uppercase tracking-wider text-gold"> {AWARD.quoteSource}</div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* INTERNATIONAL RECOGNITION */}
+      <InternationalRecognition />
+
 
       <section className="bg-white py-20">
         <div className="container-x">
@@ -211,7 +165,7 @@ export default function AboutPage() {
             </p>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row lg:justify-end">
-            <Link href="/join" className="btn-gold"><Heart className="h-4 w-4" fill="currentColor" /> Join the Movement</Link>
+            <Link href="/join" className="btn-gold"><HeartHandshake className="h-4 w-4" strokeWidth={2} /> Join the Movement</Link>
             <Link href="/donate" className="btn-outline"><Heart className="h-4 w-4" fill="currentColor" /> Donate</Link>
           </div>
         </div>

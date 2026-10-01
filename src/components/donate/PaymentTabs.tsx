@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import type { Cause, Frequency, Method } from "@/app/donate/page";
 import { validateName, validateMpesaPhone, validateEmail, generateReference, capMpesaPhone, mpesaPhoneMaxLength } from "@/lib/validation";
+import ProofUpload from "@/components/donate/ProofUpload";
 
 export default function PaymentTabs({
   method,
@@ -52,8 +53,24 @@ export default function PaymentTabs({
       </div>
 
       <div className="mt-8">
-        {tab === "MPESA" && <MpesaForm amount={amount} currency={currency} onMethodChange={onMethodChange} />}
-        {tab === "BANK" && <BankForm amount={amount} currency={currency} onMethodChange={onMethodChange} />}
+        {tab === "MPESA" && (
+          <MpesaForm
+            amount={amount}
+            currency={currency}
+            cause={cause}
+            frequency={frequency}
+            onMethodChange={onMethodChange}
+          />
+        )}
+        {tab === "BANK" && (
+          <BankForm
+            amount={amount}
+            currency={currency}
+            cause={cause}
+            frequency={frequency}
+            onMethodChange={onMethodChange}
+          />
+        )}
         {tab === "PAYPAL" && <PaypalForm />}
       </div>
 
@@ -78,10 +95,14 @@ function tabCls(active: boolean) {
 function MpesaForm({
   amount,
   currency,
+  cause,
+  frequency,
   onMethodChange,
 }: {
   amount: number;
   currency: "KES" | "USD";
+  cause: Cause;
+  frequency: Frequency;
   onMethodChange: (m: Method) => void;
 }) {
   const [name, setName] = useState("");
@@ -90,6 +111,9 @@ function MpesaForm({
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [honeypot, setHoneypot] = useState("");
   const [formLoadedAt] = useState(() => Date.now());
+  const [submitting, setSubmitting] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const errors = {
     name: validateName(name),
@@ -100,17 +124,32 @@ function MpesaForm({
 
   const blur = (f: string) => setTouched({ ...touched, [f]: true });
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (honeypot.trim() !== "") return;
     if (Date.now() - formLoadedAt < 2000) return;
     setTouched({ name: true, phone: true, email: true });
     if (!valid) return;
     onMethodChange("MPESA");
-    alert(
-      "M-Pesa details captured.\n\nNext step: wire Safaricom Daraja STK Push here.\n\n" +
-        JSON.stringify({ name, phone, email, amount, currency }, null, 2)
-    );
+    setSubmitting(true);
+    setFormError(null);
+    try {
+      const res = await fetch("/api/donate/stk", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, phone, email, amount, currency, cause, frequency }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setFormError(data.error || "Could not send M-Pesa prompt.");
+        return;
+      }
+      setSuccess(data.message || "Check your phone for the M-Pesa prompt.");
+    } catch {
+      setFormError("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -165,12 +204,21 @@ function MpesaForm({
         placeholder="you@example.com"
       />
 
+      {formError && (
+        <div className="flex items-start gap-1.5 text-xs font-medium text-campaignred">
+          <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+          <span>{formError}</span>
+        </div>
+      )}
+      {success && (
+        <div className="rounded-xl bg-green-deep/10 px-3 py-2 text-sm text-green-deep">{success}</div>
+      )}
       <button
         type="submit"
-        disabled={!valid}
+        disabled={!valid || submitting || Boolean(success)}
         className="btn-gold w-full justify-center disabled:cursor-not-allowed disabled:opacity-40"
       >
-        Send M-Pesa Prompt
+        {submitting ? "Sending prompt..." : "Send M-Pesa Prompt"}
       </button>
     </form>
   );
@@ -179,10 +227,13 @@ function MpesaForm({
 function BankForm({
   amount,
   currency,
-  onMethodChange,
+  cause,
+  frequency,
 }: {
   amount: number;
   currency: "KES" | "USD";
+  cause: Cause;
+  frequency: Frequency;
   onMethodChange: (m: Method) => void;
 }) {
   const [ref] = useState(() => generateReference());
@@ -247,7 +298,14 @@ function BankForm({
         </p>
       </div>
 
-      <ProofUpload reference={ref} />
+      <ProofUpload
+        reference={ref}
+        amount={amount}
+        currency={currency}
+        cause={cause}
+        frequency={frequency}
+        method="KCB"
+      />
     </div>
   );
 }
@@ -337,7 +395,6 @@ function Field({
         placeholder={placeholder}
         inputMode={label.toLowerCase().includes("phone") ? "numeric" : undefined}
         autoComplete={label.toLowerCase().includes("phone") ? "tel" : label.toLowerCase().includes("email") ? "email" : "off"}
-        maxLength={label.toLowerCase().includes("phone") ? 13 : undefined}
         className={`mt-1 w-full rounded-xl border-2 bg-white px-4 py-3 outline-none transition-colors placeholder:text-ink/30 ${
           error ? "border-campaignred focus:border-campaignred" : "border-ink/10 focus:border-gold"
         }`}
