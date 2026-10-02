@@ -86,7 +86,7 @@ export function validateEmail(raw: string): string | null {
 }
 
 export function validateState(v: string): string | null {
-  if (!v) return "Please select your state.";
+  if (!v) return "Please select your region or state.";
   return null;
 }
 

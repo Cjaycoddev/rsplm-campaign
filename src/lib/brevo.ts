@@ -40,7 +40,7 @@ export async function sendTransactionalEmail(opts: {
 export function welcomeHtml(name: string): string {
   return `
     <p>Dear ${escapeHtml(name)},</p>
-    <p>Thank you for standing with Hon. Nathaniel Garang Aduotdit and the People First movement.</p>
+    <p>Thank you for standing with Hon. Nathaniel Garang Aduot and the People First movement.</p>
     <p>We have recorded your registration. Our local coordination team will be in touch with updates.</p>
     <p>People First.</p>
   `;
@@ -52,6 +52,16 @@ export function donationThanksHtml(name: string, reference: string, amountLabel:
     <p>Thank you for your contribution of <strong>${escapeHtml(amountLabel)}</strong>.</p>
     <p>Reference: <strong>${escapeHtml(reference)}</strong></p>
     <p>Your support fuels grassroots mobilization across South Sudan.</p>
+    <p>People First.</p>
+  `;
+}
+
+export function proofReceivedHtml(name: string, reference: string, amountLabel: string): string {
+  return `
+    <p>Dear ${escapeHtml(name)},</p>
+    <p>We received your bank transfer proof for <strong>${escapeHtml(amountLabel)}</strong>.</p>
+    <p>Reference: <strong>${escapeHtml(reference)}</strong></p>
+    <p>Our finance team will review it and confirm. You will get another email once it is verified.</p>
     <p>People First.</p>
   `;
 }

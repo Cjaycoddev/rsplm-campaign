@@ -1,10 +1,17 @@
+export function darajaCallbackUrl(): string {
+  if (process.env.DARAJA_CALLBACK_URL) return process.env.DARAJA_CALLBACK_URL;
+  const host = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+  if (host) return `https://${host.replace(/^https?:\/\//, "")}/api/donate/mpesa/callback`;
+  return "";
+}
+
 export function isDarajaConfigured(): boolean {
   return Boolean(
     process.env.DARAJA_CONSUMER_KEY &&
       process.env.DARAJA_CONSUMER_SECRET &&
       process.env.DARAJA_PASSKEY &&
       process.env.DARAJA_SHORTCODE &&
-      process.env.DARAJA_CALLBACK_URL
+      darajaCallbackUrl()
   );
 }
 
@@ -21,8 +28,12 @@ async function accessToken(): Promise<string> {
   const res = await fetch(`${baseUrl()}/oauth/v1/generate?grant_type=client_credentials`, {
     headers: { Authorization: `Basic ${auth}` },
   });
-  if (!res.ok) throw new Error("Daraja token request failed");
-  const data = (await res.json()) as { access_token: string };
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Daraja token failed (${res.status}). ${text.slice(0, 180)}`);
+  }
+  const data = (await res.json()) as { access_token?: string };
+  if (!data.access_token) throw new Error("Daraja token response had no access_token.");
   return data.access_token;
 }
 
@@ -44,6 +55,7 @@ export async function stkPush(opts: {
   CustomerMessage?: string;
 }> {
   const shortcode = process.env.DARAJA_SHORTCODE as string;
+  const partyB = process.env.DARAJA_PARTY_B || shortcode;
   const passkey = process.env.DARAJA_PASSKEY as string;
   const ts = timestamp();
   const password = Buffer.from(`${shortcode}${passkey}${ts}`).toString("base64");
@@ -59,12 +71,13 @@ export async function stkPush(opts: {
       BusinessShortCode: shortcode,
       Password: password,
       Timestamp: ts,
-      TransactionType: "CustomerBuyGoodsOnline",
+      TransactionType:
+        process.env.DARAJA_ENV === "production" ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline",
       Amount: Math.round(opts.amount),
       PartyA: opts.phone254,
-      PartyB: shortcode,
+      PartyB: partyB,
       PhoneNumber: opts.phone254,
-      CallBackURL: process.env.DARAJA_CALLBACK_URL,
+      CallBackURL: darajaCallbackUrl(),
       AccountReference: opts.accountRef.slice(0, 12),
       TransactionDesc: opts.description.slice(0, 13),
     }),
@@ -72,7 +85,13 @@ export async function stkPush(opts: {
 
   const data = await res.json();
   if (!res.ok || data.ResponseCode !== "0") {
-    throw new Error(data.errorMessage || data.CustomerMessage || "STK push failed");
+    const msg =
+      data.errorMessage ||
+      data.errorCode ||
+      data.CustomerMessage ||
+      data.ResponseDescription ||
+      "STK push failed";
+    throw new Error(String(msg));
   }
   return data;
 }

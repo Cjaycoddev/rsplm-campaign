@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Check, ArrowRight, ArrowLeft, User, Phone, Mail, Briefcase, AlertCircle } from "lucide-react";
-import { STATES, STATE_LIST, ROLES, type Role } from "@/lib/states";
+import { locationsFor, ROLES, type Role } from "@/lib/states";
 import {
   validateName,
   validateJoinPhone,
@@ -33,7 +33,9 @@ export default function JoinForm() {
   const [honeypot, setHoneypot] = useState("");
   const [formLoadedAt] = useState(() => Date.now());
 
-  const counties = state ? STATES[state] : [];
+  const regions = locationsFor(phoneCountry);
+  const regionList = Object.keys(regions);
+  const counties = state ? regions[state] ?? [] : [];
 
   const runValidate = (fields: (keyof Errors)[]) => {
     const next: Errors = { ...errors };
@@ -157,7 +159,7 @@ export default function JoinForm() {
             value={name}
             onChange={setName}
             onBlur={() => blur("name")}
-            placeholder="Nathaniel Garang Aduotdit"
+            placeholder="Nathaniel Garang Aduot"
             error={touched.name ? errors.name : undefined}
           />
 
@@ -171,8 +173,11 @@ export default function JoinForm() {
                 <button
                   key={code}
                   type="button"
+                  aria-pressed={phoneCountry === code}
                   onClick={() => {
                     setPhoneCountry(code);
+                    setState("");
+                    setCounty("");
                     setTouched({ ...touched, phone: true });
                     setTimeout(() => runValidate(["phone"]), 0);
                   }}
@@ -229,11 +234,17 @@ export default function JoinForm() {
         <div className="space-y-5">
           <div>
             <h2 className="font-display text-2xl font-bold text-green-deep">Where are you based?</h2>
-            <p className="mt-1 text-sm text-ink/60">We assign you to your local coordination committee.</p>
+            <p className="mt-1 text-sm text-ink/60">
+              {phoneCountry === "KE"
+                ? "Kenyan numbers use Kenya counties so we can place you with the Nairobi / Kenya desk."
+                : "We assign you to your local South Sudan coordination committee."}
+            </p>
           </div>
 
           <div>
-            <label className="text-sm font-medium text-ink/70">State of Residence</label>
+            <label className="text-sm font-medium text-ink/70">
+              {phoneCountry === "KE" ? "Region" : "State of Residence"}
+            </label>
             <select
               value={state}
               onChange={(e) => {
@@ -245,8 +256,8 @@ export default function JoinForm() {
                 touched.state && errors.state ? "border-campaignred" : "border-ink/10"
               }`}
             >
-              <option value="">Select a state</option>
-              {STATE_LIST.map((s) => (
+              <option value="">{phoneCountry === "KE" ? "Select a region" : "Select a state"}</option>
+              {regionList.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>
@@ -266,7 +277,7 @@ export default function JoinForm() {
                 touched.county && errors.county ? "border-campaignred" : "border-ink/10"
               }`}
             >
-              <option value="">{state ? "Select a county" : "Select a state first"}</option>
+              <option value="">{state ? "Select a county" : phoneCountry === "KE" ? "Select a region first" : "Select a state first"}</option>
               {counties.map((c) => (
                 <option key={c} value={c}>
                   {c}

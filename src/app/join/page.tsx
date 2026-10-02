@@ -18,7 +18,7 @@ export default function JoinPage() {
               Join the Movement
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-white/80">
-              Every supporter counts. Register today to stand with Hon. Nathaniel Garang Aduotdit and the People First movement.
+              Every supporter counts. Register today to stand with Hon. Nathaniel Garang Aduot and the People First movement.
             </p>
           </div>
         </section>

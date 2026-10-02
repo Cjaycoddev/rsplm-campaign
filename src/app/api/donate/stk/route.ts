@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         error:
-          "M-Pesa STK is not live yet. Use bank transfer this weekend, or add Daraja keys to .env.local.",
+          "M-Pesa STK is not live yet. Add Daraja keys to .env.local, or use bank transfer with proof of payment.",
       },
       { status: 503 }
     );
@@ -49,7 +49,7 @@ export async function POST(req: Request) {
   const currency = String(body.currency ?? "KES") as "KES" | "USD";
 
   if (currency !== "KES") {
-    return NextResponse.json({ error: "M-Pesa accepts KES only. Switch currency or use bank transfer." }, { status: 400 });
+    return NextResponse.json({ error: "M-Pesa accepts KES only." }, { status: 400 });
   }
 
   const err =
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       method: "MPESA",
       status: "pending",
       reference,
-      till_number: process.env.DARAJA_SHORTCODE,
+      till_number: process.env.DARAJA_PARTY_B || process.env.DARAJA_SHORTCODE,
     })
     .select("id, reference")
     .single();

@@ -18,7 +18,7 @@ export default function Footer() {
               Serving with Honor. Leading with Heart. A covenant with the people of South Sudan.
             </p>
             <div className="mt-6">
-              <div className="font-display text-sm font-bold text-white">Hon. Nathaniel Garang Aduotdit</div>
+              <div className="font-display text-sm font-bold text-white">Hon. Nathaniel Garang&apos; Aduot</div>
               <div className="text-xs text-gold">For President  South Sudan 2026</div>
             </div>
           </div>
@@ -50,7 +50,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-6 text-center text-xs text-white/50">
-           2026 R-SPLM/F Campaign  People First  Hon. Nathaniel Garang Aduotdit for President
+           2026 R-SPLM/F Campaign  People First  Hon. Nathaniel Garang Aduot for President
         </div>
       </div>
     </footer>

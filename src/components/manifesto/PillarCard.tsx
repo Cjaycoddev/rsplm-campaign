@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
 import { ChevronDown, Sparkles } from "lucide-react";
 import type { Pillar } from "@/lib/manifesto";
@@ -42,7 +43,7 @@ export default function PillarCard({ pillar, index }: { pillar: Pillar; index: n
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d", perspective: 1000 }}
-      className="group relative rounded-3xl border border-green-deep/10 bg-white shadow-card transition-shadow duration-500 hover:shadow-[0_30px_80px_-20px_rgba(11,93,42,0.35)]"
+      className="group relative overflow-hidden rounded-3xl border border-green-deep/10 bg-white shadow-card transition-shadow duration-500 hover:shadow-[0_30px_80px_-20px_rgba(11,93,42,0.35)]"
     >
       {/* Cursor-following glow */}
       <motion.div
@@ -57,6 +58,21 @@ export default function PillarCard({ pillar, index }: { pillar: Pillar; index: n
       {/* Gold shimmer line at top */}
       <div className="absolute inset-x-0 top-0 h-[3px] overflow-hidden rounded-t-3xl">
         <div className="h-full w-full bg-gradient-to-r from-transparent via-gold to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      </div>
+
+      <div className="relative h-36 overflow-hidden sm:h-44">
+        <Image src={pillar.image} alt="" fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 720px" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent" />
+        <div
+          className="absolute left-0 top-0 h-full w-1.5"
+          style={{ background: pillar.accent }}
+        />
+        <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+          <span className="font-display text-4xl font-bold text-white/90">{pillar.n}</span>
+          <span className="rounded-full bg-white/15 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold backdrop-blur-md">
+            Pillar {pillar.n}
+          </span>
+        </div>
       </div>
 
       <button

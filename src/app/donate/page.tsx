@@ -18,7 +18,6 @@ export default function DonatePage() {
   const [step, setStep] = useState(1);
   const [cause, setCause] = useState<Cause | null>(null);
   const [amount, setAmount] = useState(0);
-  const [currency, setCurrency] = useState<"KES" | "USD">("KES");
   const [frequency, setFrequency] = useState<Frequency>("ONCE");
   const [method, setMethod] = useState<Method | null>(null);
 
@@ -78,10 +77,8 @@ export default function DonatePage() {
             {step === 2 && (
               <AmountPicker
                 amount={amount}
-                currency={currency}
                 frequency={frequency}
                 onAmountChange={setAmount}
-                onCurrencyChange={setCurrency}
                 onFrequencyChange={setFrequency}
                 onBack={() => setStep(1)}
                 onNext={() => setStep(3)}
@@ -94,7 +91,6 @@ export default function DonatePage() {
                 onBack={() => setStep(2)}
                 cause={cause}
                 amount={amount}
-                currency={currency}
                 frequency={frequency}
               />
             )}

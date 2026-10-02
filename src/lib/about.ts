@@ -54,7 +54,7 @@ export const LEADERSHIP_PILLARS = [
 ] as const;
 
 export const BIO_PARAGRAPHS = [
-  "Hon. Nathaniel Garang' Aduotdit is an emerging South Sudanese political figure representing the next generation of leadership. From a nation shaped by conflict and fragile governance, he stands for change and reform  focused on rebuilding national unity, strengthening democratic institutions, and giving young people a real stake in shaping South Sudan's future.",
+  "Hon. Nathaniel Garang' Aduot is an emerging South Sudanese political figure representing the next generation of leadership. From a nation shaped by conflict and fragile governance, he stands for change and reform  focused on rebuilding national unity, strengthening democratic institutions, and giving young people a real stake in shaping South Sudan's future.",
   "His visibility has grown through diaspora engagement, political advocacy, and a policy-oriented approach to governance  speaking about transitioning South Sudan from instability to structured, people-centered leadership.",
   "A son of the people, his message is simple: put people first. Protect peace. Restore trust. Create opportunity that reaches every community. When unity guides our choices, progress becomes real and shared by all.",
 ];

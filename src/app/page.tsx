@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Users, Vote, MapPin, UserCheck, Heart, ArrowRight,
-  Shield, HandHeart, Rocket, Globe, Quote,
+  Users, Vote, MapPin, UserCheck, Heart, ArrowRight, Quote,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -10,22 +9,15 @@ import StatCounter from "@/components/home/StatCounter";
 import CardDeck from "@/components/home/CardDeck";
 
 const PILLARS_MANIFESTO = [
-  { n: "01", t: "Unite the Nation", d: "Heal the past. End tribalism. One South Sudan." },
-  { n: "02", t: "Power to the People", d: "Free, fair, transparent elections." },
-  { n: "03", t: "Jobs, Not Promises", d: "70% youth focus. 50,000 start-ups a year." },
-  { n: "04", t: "End Corruption", d: "Zero tolerance. Full asset declaration." },
-  { n: "05", t: "Back to the World", d: "Global partnerships. Diaspora compact." },
-  { n: "06", t: "Feed the Nation", d: "30M hectares. Agricultural revolution." },
-  { n: "07", t: "Social Benefit Fund", d: "Safety net for every citizen." },
-  { n: "08", t: "Free Healthcare", d: "Free at point of care." },
-  { n: "09", t: "Free Education", d: "Nursery to university." },
-];
-
-const LEADERSHIP = [
-  { icon: Shield, t: "Reform-Driven", d: "Championing governance reform to transition South Sudan from instability to structured, accountable leadership." },
-  { icon: HandHeart, t: "Unity Builder", d: "Bringing all communities together  bridging ethnic, regional, and generational divides for lasting national cohesion." },
-  { icon: Rocket, t: "Youth Advocate", d: "Giving young South Sudanese a real stake in the country's future through opportunity, inclusion, and representation." },
-  { icon: Globe, t: "Global Vision", d: "Reconnecting South Sudan to the world  empowering the diaspora and rebuilding international confidence." },
+  { n: "01", t: "Unite the Nation", d: "Heal the past. End tribalism. One South Sudan.", img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop" },
+  { n: "02", t: "Power to the People", d: "Free, fair, transparent elections.", img: "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?q=80&w=800&auto=format&fit=crop" },
+  { n: "03", t: "Jobs, Not Promises", d: "70% youth focus. 50,000 start-ups a year.", img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800&auto=format&fit=crop" },
+  { n: "04", t: "End Corruption", d: "Zero tolerance. Full asset declaration.", img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=800&auto=format&fit=crop" },
+  { n: "05", t: "Back to the World", d: "Global partnerships. Diaspora compact.", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop" },
+  { n: "06", t: "Feed the Nation", d: "30M hectares. Agricultural revolution.", img: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=800&auto=format&fit=crop" },
+  { n: "07", t: "Social Benefit Fund", d: "Safety net for every citizen.", img: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=800&auto=format&fit=crop" },
+  { n: "08", t: "Free Healthcare", d: "Free at point of care.", img: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=800&auto=format&fit=crop" },
+  { n: "09", t: "Free Education", d: "Nursery to university.", img: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop" },
 ];
 
 const PEOPLE_FIRST = ["Unite", "Democracy", "Jobs", "Accountability", "Diplomacy"];
@@ -48,7 +40,7 @@ export default function Home() {
             </div>
             <h1 className="font-display text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
               Hon. Nathaniel<br />
-              <span className="text-gold">Garang&apos; Aduotdit</span>
+              <span className="text-gold">Garang&apos; Aduot</span>
             </h1>
             <p className="mt-6 text-xl font-medium text-white/90 sm:text-2xl">
               Serving with Honor. Leading with Heart.
@@ -70,7 +62,7 @@ export default function Home() {
             <div className="relative mx-auto aspect-[3/4] w-full max-w-md">
               <div className="absolute -inset-4 rounded-3xl bg-gold/20 blur-3xl" />
               <div className="relative h-full overflow-hidden rounded-3xl border-2 border-gold/40 shadow-2xl">
-                <Image src="/images/nathaniel-portrait.jpg" alt="Hon. Nathaniel Garang Aduotdit" fill className="object-cover" priority />
+                <Image src="/images/nathaniel-portrait.png" alt="Hon. Nathaniel Garang Aduot" fill className="object-cover" priority />
               </div>
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gold px-6 py-2 text-xs font-bold uppercase tracking-wider text-ink shadow-gold">
                 For President  South Sudan 2026
@@ -146,7 +138,7 @@ export default function Home() {
               A New Generation of Leadership
             </h2>
             <p className="mt-6 text-ink/80">
-              Hon. Nathaniel Garang&apos; Aduotdit represents the next generation of South Sudanese leadership. From a nation shaped by conflict and fragile governance, he stands for change and reform  rebuilding national unity, strengthening democratic institutions, and giving young people a real stake in South Sudan&apos;s future.
+              Hon. Nathaniel Garang&apos; Aduot represents the next generation of South Sudanese leadership. From a nation shaped by conflict and fragile governance, he stands for change and reform  rebuilding national unity, strengthening democratic institutions, and giving young people a real stake in South Sudan&apos;s future.
             </p>
             <p className="mt-4 text-ink/70">
               His visibility has grown through diaspora engagement, political advocacy, and a policy-oriented approach to governance  transitioning South Sudan from instability to structured, people-centered leadership.
@@ -173,10 +165,16 @@ export default function Home() {
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS_MANIFESTO.map((p) => (
-              <div key={p.n} className="group relative overflow-hidden rounded-2xl border border-green-deep/10 bg-white p-6 transition-all hover:border-gold/40 hover:shadow-card-hover">
-                <div className="absolute -right-4 -top-4 font-display text-7xl font-bold text-gold/10 transition-all group-hover:text-gold/20">{p.n}</div>
-                <h3 className="relative font-display text-lg font-bold text-green-deep">{p.t}</h3>
-                <p className="relative mt-2 text-sm text-ink/70">{p.d}</p>
+              <div key={p.n} className="group relative overflow-hidden rounded-2xl border border-green-deep/10 bg-white shadow-card transition-all hover:-translate-y-1 hover:border-gold/40 hover:shadow-card-hover">
+                <div className="relative h-32 overflow-hidden">
+                  <Image src={p.img} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="(max-width: 768px) 100vw, 33vw" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-green-deep/80 to-black/10" />
+                  <div className="absolute bottom-3 left-4 font-display text-2xl font-bold text-gold">{p.n}</div>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display text-lg font-bold text-green-deep">{p.t}</h3>
+                  <p className="mt-2 text-sm text-ink/70">{p.d}</p>
+                </div>
               </div>
             ))}
           </div>
@@ -197,7 +195,7 @@ export default function Home() {
             &ldquo;This manifesto is a covenant with the people of South Sudan. Every promise here will be measured, tracked, and publicly reported.&rdquo;
           </blockquote>
           <div className="mt-6 text-sm font-semibold uppercase tracking-wider text-gold">
-             Hon. Nathaniel Garang&apos; Aduotdit
+             Hon. Nathaniel Garang&apos; Aduot
           </div>
         </div>
       </section>

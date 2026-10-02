@@ -6,7 +6,7 @@ const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces", dis
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 export const metadata: Metadata = {
-  title: "Hon. Nathaniel Garang Aduotdit  Next President, South Sudan 2026",
+  title: "Hon. Nathaniel Garang Aduot  Next President, South Sudan 2026",
   description:
     "R-SPLM/F  People First. Chairman, ordained Anglican priest, International Peace Award Laureate 2025. Serving with Honor. Leading with Heart.",
   icons: { icon: "/logo.png" },

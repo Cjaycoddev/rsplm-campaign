@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       html: donationThanksHtml(
         data.display_name,
         data.reference,
-        `${data.currency} ${Number(data.amount).toLocaleString()}`
+        `KES ${Number(data.amount).toLocaleString()}`
       ),
     });
   }

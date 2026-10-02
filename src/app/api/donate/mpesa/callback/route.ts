@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       html: donationThanksHtml(
         row.display_name,
         row.reference,
-        `${row.currency} ${Number(row.amount).toLocaleString()}`
+        `KES ${Number(row.amount).toLocaleString()}`
       ),
     });
   }

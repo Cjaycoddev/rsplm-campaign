@@ -8,6 +8,7 @@ import {
   validateEmail,
   validateName,
 } from "@/lib/validation";
+import { sendTransactionalEmail, proofReceivedHtml } from "@/lib/brevo";
 import type { Cause, Frequency, Method } from "@/app/donate/page";
 
 const CAUSES: Cause[] = [
@@ -37,22 +38,18 @@ export async function POST(req: Request) {
   const cause = String(form.get("cause") ?? "") as Cause;
   const frequency = String(form.get("frequency") ?? "ONCE") as Frequency;
   const method = String(form.get("method") ?? "KCB") as Method;
-  const currency = String(form.get("currency") ?? "KES") as "KES" | "USD";
   const amount = Number(form.get("amount"));
   const reference = String(form.get("reference") ?? generateReference());
 
   const nameErr = validateName(name);
   const emailErr = validateEmail(emailRaw);
   const causeErr = validateCause(cause);
-  const amountErr = validateAmount(amount, currency);
+  const amountErr = validateAmount(amount, "KES");
   if (nameErr || emailErr || causeErr || amountErr) {
     return NextResponse.json({ error: nameErr || emailErr || causeErr || amountErr }, { status: 400 });
   }
   if (!CAUSES.includes(cause) || !FREQ.includes(frequency) || !METHODS.includes(method)) {
     return NextResponse.json({ error: "Invalid donation details." }, { status: 400 });
-  }
-  if (currency !== "KES" && currency !== "USD") {
-    return NextResponse.json({ error: "Unsupported currency." }, { status: 400 });
   }
 
   const files = form.getAll("files").filter((f): f is File => f instanceof File && f.size > 0);
@@ -75,7 +72,7 @@ export async function POST(req: Request) {
       display_name: displayName,
       email,
       amount,
-      currency,
+      currency: "KES",
       frequency,
       cause,
       method,
@@ -108,6 +105,15 @@ export async function POST(req: Request) {
       file_name: f.name,
       mime_type: f.type || "application/octet-stream",
       size_bytes: f.size,
+    });
+  }
+
+  if (email) {
+    void sendTransactionalEmail({
+      to: email,
+      toName: displayName,
+      subject: "We received your payment proof",
+      html: proofReceivedHtml(displayName, donation.reference, `KES ${amount.toLocaleString()}`),
     });
   }
 

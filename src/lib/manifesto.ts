@@ -6,6 +6,8 @@ export interface Pillar {
   desc: string;
   benchmark: { value: string; label: string };
   points: string[];
+  image: string;
+  accent: string;
 }
 
 export const PILLARS: Pillar[] = [
@@ -22,6 +24,8 @@ export const PILLARS: Pillar[] = [
       "Demobilize and reintegrate former armed groups into a unified, non-partisan national defense force.",
       "Launch national cultural exchanges and shared civic curricula in all secondary institutions.",
     ],
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1200&auto=format&fit=crop",
+    accent: "#C9A227",
   },
   {
     n: "02",
@@ -36,6 +40,8 @@ export const PILLARS: Pillar[] = [
       "Enforce strict constitutional term limits and judicial independence free from executive interference.",
       "Decentralize executive power to empower elected county commissioners and state legislatures.",
     ],
+    image: "https://images.unsplash.com/photo-1540910419892-4a36d2c3266c?q=80&w=1200&auto=format&fit=crop",
+    accent: "#0E6B2F",
   },
   {
     n: "03",
@@ -50,6 +56,8 @@ export const PILLARS: Pillar[] = [
       "Enact local content laws guaranteeing 60%+ skilled jobs in energy and mining to qualified South Sudanese citizens.",
       "Provide micro-credit facilities with subsidized zero-interest rates for women-led commercial ventures.",
     ],
+    image: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=1200&auto=format&fit=crop",
+    accent: "#C8102E",
   },
   {
     n: "04",
@@ -64,6 +72,8 @@ export const PILLARS: Pillar[] = [
       "Empower an autonomous Special Anti-Corruption Tribunal with expedited asset forfeiture authority.",
       "Introduce whistleblower protection legislation with financial incentives for reporting misappropriation.",
     ],
+    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?q=80&w=1200&auto=format&fit=crop",
+    accent: "#1B3A4B",
   },
   {
     n: "05",
@@ -78,6 +88,8 @@ export const PILLARS: Pillar[] = [
       "Standardize international arbitration mechanisms to guarantee international investor property security.",
       "Modernize consular networks in key global hubs (Nairobi, Kampala, Addis Ababa, London, Washington, Melbourne).",
     ],
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+    accent: "#2E86AB",
   },
   {
     n: "06",
@@ -92,6 +104,8 @@ export const PILLARS: Pillar[] = [
       "Construct all-weather farm-to-market feeder roads connecting agricultural hubs in the Equatorias, Jonglei, and Bahr el Ghazal.",
       "Establish strategic national grain reserves and cooperative cold-storage hubs in every state capital.",
     ],
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=1200&auto=format&fit=crop",
+    accent: "#6B8F3C",
   },
   {
     n: "07",
@@ -106,6 +120,8 @@ export const PILLARS: Pillar[] = [
       "Mandate disability accessibility in all state public buildings, transport hubs, and public schools.",
       "Establish rapid social relief response funds triggered during seasonal flood and climate disruptions.",
     ],
+    image: "https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=1200&auto=format&fit=crop",
+    accent: "#C9A227",
   },
   {
     n: "08",
@@ -120,6 +136,8 @@ export const PILLARS: Pillar[] = [
       "Deploy a national essential medicines distribution pipeline protected by serialized tracking to prevent stockouts.",
       "Double compensation and housing benefits for domestic nurses, midwives, and doctors serving in rural areas.",
     ],
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1200&auto=format&fit=crop",
+    accent: "#0E6B2F",
   },
   {
     n: "09",
@@ -134,5 +152,7 @@ export const PILLARS: Pillar[] = [
       "Establish nationwide school feeding programs providing free daily nutritious meals to boost enrollment and retention.",
       "Deploy digital textbooks and teacher training certifications across all ten states.",
     ],
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop",
+    accent: "#C8102E",
   },
 ];

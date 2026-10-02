@@ -1,29 +1,19 @@
-import { createHmac, randomBytes, timingSafeEqual } from "crypto";
 import { cookies } from "next/headers";
+import {
+  ADMIN_COOKIE,
+  checkAdminPassword,
+  randomTokenHex,
+  signAdminToken,
+  verifyAdminCookie,
+} from "@/lib/admin-cookie";
 
-export const ADMIN_COOKIE = "rsplm_admin";
-const MAX_AGE = 60 * 60 * 12; // 12 hours
+export { ADMIN_COOKIE, checkAdminPassword, verifyAdminCookie };
 
-function secret(): string {
-  return process.env.ADMIN_SESSION_SECRET || process.env.ADMIN_PASSWORD || "";
-}
-
-function sign(token: string): string {
-  return createHmac("sha256", secret()).update(token).digest("hex");
-}
-
-export function checkAdminPassword(input: string): boolean {
-  const expected = process.env.ADMIN_PASSWORD;
-  if (!expected) return false;
-  const a = Buffer.from(input);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length) return false;
-  return timingSafeEqual(a, b);
-}
+const MAX_AGE = 60 * 60 * 12;
 
 export async function createAdminSession() {
-  const token = randomBytes(24).toString("hex");
-  const value = `${token}.${sign(token)}`;
+  const token = randomTokenHex(24);
+  const value = `${token}.${await signAdminToken(token)}`;
   const jar = await cookies();
   jar.set(ADMIN_COOKIE, value, {
     httpOnly: true,
@@ -37,18 +27,6 @@ export async function createAdminSession() {
 export async function clearAdminSession() {
   const jar = await cookies();
   jar.delete(ADMIN_COOKIE);
-}
-
-export function verifyAdminCookie(raw: string | undefined): boolean {
-  if (!secret() || !raw) return false;
-  const [token, sig] = raw.split(".");
-  if (!token || !sig) return false;
-  const expected = sign(token);
-  try {
-    return timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
-  } catch {
-    return false;
-  }
 }
 
 export async function isAdminSession(): Promise<boolean> {

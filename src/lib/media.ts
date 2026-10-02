@@ -31,11 +31,11 @@ export const MEDIA_ITEMS: MediaItem[] = [
   {
     id: "p3",
     type: "press",
-    title: "AU Sets Firm Deadlines for South Sudan Transition; R-SPLM/F Candidate Nathaniel Garang Aduotdit Endorses Resolutions",
+    title: "AU Sets Firm Deadlines for South Sudan Transition; R-SPLM/F Candidate Nathaniel Garang Aduot Endorses Resolutions",
     excerpt: "Endorsed the African Union's C5 Committee resolutions demanding immediate ceasefire, release of political detainees, and no further election delays.",
     date: "February 17, 2026",
     category: "Diplomacy",
-    url: "https://ethioinsight.org/au-sets-firm-deadlines-for-south-sudan-transition-r-splm-f-candidate-nathaniel-garang-aduotdit-endorses-resolutions/",
+    url: "https://ethioinsight.org/au-sets-firm-deadlines-for-south-sudan-transition-r-splm-f-candidate-nathaniel-garang-Aduot-endorses-resolutions/",
   },
   {
     id: "p4",
@@ -53,7 +53,7 @@ export const MEDIA_ITEMS: MediaItem[] = [
     excerpt: "A reflection on the moral architecture of leadership  and why every policy must be measured against its impact on the most vulnerable.",
     date: "Coming Soon",
     category: "Vision",
-    author: "Hon. Nathaniel Garang Aduotdit",
+    author: "Hon. Nathaniel Garang Aduot",
     readTime: "5 min read",
   },
   {

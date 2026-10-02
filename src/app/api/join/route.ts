@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { STATES, ROLES, type Role } from "@/lib/states";
+import { isValidLocation, ROLES, type Role } from "@/lib/states";
 import {
   normalizeDisplayName,
   normalizeJoinPhone,
@@ -58,8 +58,8 @@ export async function POST(req: Request) {
   const first = Object.values(errors).find(Boolean);
   if (first) return NextResponse.json({ error: first, errors }, { status: 400 });
 
-  if (!STATES[state]?.includes(county)) {
-    return NextResponse.json({ error: "County does not match the selected state." }, { status: 400 });
+  if (!isValidLocation(phoneCountry, state, county)) {
+    return NextResponse.json({ error: "County does not match the selected region." }, { status: 400 });
   }
   if (!ROLE_IDS.has(role)) {
     return NextResponse.json({ error: "Please choose your role in the movement." }, { status: 400 });
@@ -99,7 +99,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Could not save registration. Please try again." }, { status: 500 });
   }
 
-  if (email && emailOptIn) {
+  if (email) {
     void sendTransactionalEmail({
       to: email,
       toName: displayName,

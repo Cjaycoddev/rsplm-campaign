@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import {
-  ArrowLeft, Smartphone, Building2, Globe, Copy, Check,
-  ShieldCheck, Upload, AlertCircle,
+  ArrowLeft, Smartphone, Building2, Copy, Check,
+  ShieldCheck, AlertCircle,
 } from "lucide-react";
 import type { Cause, Frequency, Method } from "@/app/donate/page";
 import { validateName, validateMpesaPhone, validateEmail, generateReference, capMpesaPhone, mpesaPhoneMaxLength } from "@/lib/validation";
 import ProofUpload from "@/components/donate/ProofUpload";
+
+const MPESA_TILL = process.env.NEXT_PUBLIC_MPESA_TILL || "4053712";
 
 export default function PaymentTabs({
   method,
@@ -15,7 +17,6 @@ export default function PaymentTabs({
   onBack,
   cause,
   amount,
-  currency,
   frequency,
 }: {
   method: Method | null;
@@ -23,21 +24,19 @@ export default function PaymentTabs({
   onBack: () => void;
   cause: Cause;
   amount: number;
-  currency: "KES" | "USD";
   frequency: Frequency;
 }) {
-  const [tab, setTabRaw] = useState<"MPESA" | "BANK" | "PAYPAL">("MPESA");
-  const setTab = (t: "MPESA" | "BANK" | "PAYPAL") => {
+  const [tab, setTabRaw] = useState<"MPESA" | "BANK">("MPESA");
+  const setTab = (t: "MPESA" | "BANK") => {
     setTabRaw(t);
-    onMethodChange(t === "MPESA" ? "MPESA" : t === "BANK" ? "KCB" : "PAYPAL");
+    onMethodChange(t === "MPESA" ? "MPESA" : "KCB");
   };
 
   return (
     <div>
       <h2 className="font-display text-2xl font-bold text-green-deep">How would you like to pay?</h2>
       <p className="mt-1 text-sm text-ink/60">
-        {currency === "KES" ? "KES" : "$"} {amount.toLocaleString()} {" "}
-        {frequency === "ONCE" ? "One-time" : "Monthly"}
+        KES {amount.toLocaleString()} {frequency === "ONCE" ? "One-time" : "Monthly"}
       </p>
 
       <div className="mt-6 flex gap-1 rounded-full bg-ink/5 p-1">
@@ -47,16 +46,12 @@ export default function PaymentTabs({
         <button onClick={() => setTab("BANK")} className={tabCls(tab === "BANK")}>
           <Building2 className="h-4 w-4" /> Bank
         </button>
-        <button onClick={() => setTab("PAYPAL")} className={tabCls(tab === "PAYPAL")}>
-          <Globe className="h-4 w-4" /> Intl
-        </button>
       </div>
 
       <div className="mt-8">
         {tab === "MPESA" && (
           <MpesaForm
             amount={amount}
-            currency={currency}
             cause={cause}
             frequency={frequency}
             onMethodChange={onMethodChange}
@@ -65,13 +60,12 @@ export default function PaymentTabs({
         {tab === "BANK" && (
           <BankForm
             amount={amount}
-            currency={currency}
             cause={cause}
             frequency={frequency}
             onMethodChange={onMethodChange}
+            selected={method === "COOP" ? "COOP" : "KCB"}
           />
         )}
-        {tab === "PAYPAL" && <PaypalForm />}
       </div>
 
       <div className="mt-8">
@@ -94,13 +88,11 @@ function tabCls(active: boolean) {
 
 function MpesaForm({
   amount,
-  currency,
   cause,
   frequency,
   onMethodChange,
 }: {
   amount: number;
-  currency: "KES" | "USD";
   cause: Cause;
   frequency: Frequency;
   onMethodChange: (m: Method) => void;
@@ -114,6 +106,26 @@ function MpesaForm({
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [stkReady, setStkReady] = useState<boolean | null>(null);
+  const [stkNote, setStkNote] = useState("");
+
+  useEffect(() => {
+    fetch("/api/donate/status")
+      .then((r) => r.json())
+      .then((d) => {
+        setStkReady(Boolean(d.daraja && d.supabase));
+        setStkNote(
+          !d.daraja
+            ? "M-Pesa is not connected."
+            : !d.callbackPublic
+            ? "STK needs an https callback URL (not localhost)."
+            : d.sandbox
+            ? `Sandbox STK is connected · test paybill ${d.till || "174379"}`
+            : `Live till ${d.till || "—"}. STK ready.`
+        );
+      })
+      .catch(() => setStkReady(false));
+  }, []);
 
   const errors = {
     name: validateName(name),
@@ -127,7 +139,10 @@ function MpesaForm({
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (honeypot.trim() !== "") return;
-    if (Date.now() - formLoadedAt < 2000) return;
+    if (Date.now() - formLoadedAt < 2000) {
+      setFormError("Please wait a moment, then tap Send again.");
+      return;
+    }
     setTouched({ name: true, phone: true, email: true });
     if (!valid) return;
     onMethodChange("MPESA");
@@ -137,7 +152,7 @@ function MpesaForm({
       const res = await fetch("/api/donate/stk", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, email, amount, currency, cause, frequency }),
+        body: JSON.stringify({ name, phone, email, amount, currency: "KES", cause, frequency }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -168,11 +183,18 @@ function MpesaForm({
         <div className="flex items-start gap-3">
           <ShieldCheck className="mt-0.5 h-5 w-5 flex-shrink-0 text-gold-dark" />
           <div>
-            <div className="font-semibold text-green-deep">Secure M-Pesa Prompt</div>
+            <div className="font-semibold text-green-deep">Secure M-Pesa prompt</div>
             <div className="text-ink/70">
-              You will receive an STK push on your phone to confirm KES{" "}
-              {currency === "KES" ? amount.toLocaleString() : (amount * 129).toLocaleString()}.
+              You will receive an STK push to pay <strong>KES {amount.toLocaleString()}</strong>
+              {process.env.NEXT_PUBLIC_DARAJA_SANDBOX === "true"
+                ? ". Sandbox mode uses Safaricom test Paybill 174379 (not the live tills)."
+                : <> to Buy Goods till <strong>{MPESA_TILL}</strong>. Manual till payments can also use <strong>4053712</strong> or <strong>4055902</strong>.</>}
             </div>
+            {stkNote && (
+              <div className={`mt-2 text-xs font-semibold ${stkReady ? "text-green-deep" : "text-campaignred"}`}>
+                {stkReady === null ? "Checking M-Pesa…" : stkNote}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -183,7 +205,7 @@ function MpesaForm({
         onChange={setName}
         onBlur={() => blur("name")}
         error={touched.name ? errors.name : undefined}
-        placeholder="Nathaniel Garang Aduotdit"
+        placeholder="Nathaniel Garang Aduot"
       />
       <Field
         label="M-Pesa Phone (10 digits, starts 01 or 07)"
@@ -226,18 +248,20 @@ function MpesaForm({
 
 function BankForm({
   amount,
-  currency,
   cause,
   frequency,
+  onMethodChange,
+  selected,
 }: {
   amount: number;
-  currency: "KES" | "USD";
   cause: Cause;
   frequency: Frequency;
   onMethodChange: (m: Method) => void;
+  selected: "KCB" | "COOP";
 }) {
   const [ref] = useState(() => generateReference());
   const [copied, setCopied] = useState<string | null>(null);
+  const [bank, setBank] = useState<"KCB" | "COOP">(selected);
 
   const copy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -246,8 +270,8 @@ function BankForm({
   };
 
   const accounts = [
-    { bank: "KCB Bank", acc: "1142057259", name: "Diphihan Misoy", till: null as string | null },
-    { bank: "Co-operative Bank", acc: "01109040816100", name: "Eston Kinyua", till: "4053712 / 4055902" },
+    { id: "KCB" as const, bank: "KCB Bank", acc: "1142057259", name: "Diphihan Misoy" },
+    { id: "COOP" as const, bank: "Co-operative Bank", acc: "01109040816100", name: "Eston Kinyua" },
   ];
 
   return (
@@ -272,61 +296,50 @@ function BankForm({
       </div>
 
       {accounts.map((a) => (
-        <div key={a.bank} className="rounded-2xl border border-ink/10 bg-white p-4">
+        <button
+          type="button"
+          key={a.bank}
+          onClick={() => {
+            setBank(a.id);
+            onMethodChange(a.id);
+          }}
+          className={`w-full rounded-2xl border-2 p-4 text-left transition-all ${
+            bank === a.id ? "border-gold bg-gold/5" : "border-ink/10 bg-white hover:border-gold/40"
+          }`}
+        >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
               <div className="font-semibold text-green-deep">{a.bank}</div>
               <div className="mt-1 font-mono text-sm text-ink">{a.acc}</div>
               <div className="text-xs text-ink/60">Name: {a.name}</div>
-              {a.till && <div className="text-xs text-ink/60">Till: {a.till}</div>}
             </div>
-            <button
-              type="button"
-              onClick={() => copy(a.acc, a.bank)}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                copy(a.acc, a.bank);
+              }}
               className="rounded-lg bg-ink/5 p-2 transition-colors hover:bg-gold/20"
             >
               {copied === a.bank ? <Check className="h-4 w-4 text-green-deep" /> : <Copy className="h-4 w-4" />}
-            </button>
+            </span>
           </div>
-        </div>
+        </button>
       ))}
 
       <div className="rounded-2xl border border-green-deep/20 bg-green-deep/5 p-4 text-center">
         <p className="text-sm text-ink/80">
-          Transferred <span className="font-semibold text-green-deep">{currency === "KES" ? "KES" : "$"} {amount.toLocaleString()}</span>?
-          Upload your proof below to complete the donation.
+          Transferred <span className="font-semibold text-green-deep">KES {amount.toLocaleString()}</span>?
+          Upload a screenshot or PDF of the payment so the record can be verified.
         </p>
       </div>
 
       <ProofUpload
         reference={ref}
         amount={amount}
-        currency={currency}
         cause={cause}
         frequency={frequency}
-        method="KCB"
+        method={bank}
       />
-    </div>
-  );
-}
-
-function PaypalForm() {
-  return (
-    <div className="rounded-2xl border border-ink/10 bg-white p-8 text-center">
-      <Globe className="mx-auto h-10 w-10 text-green-deep" />
-      <div className="mt-3 font-display text-xl font-bold text-green-deep">
-        International Payments
-      </div>
-      <p className="mt-2 text-sm text-ink/60">
-        PayPal gateway is being deployed. In the meantime, use bank transfer or
-        contact the Diaspora Desk for alternative payment options.
-      </p>
-      <button
-        type="button"
-        className="btn-outline mt-6 justify-center border-ink/20 text-green-deep hover:border-gold"
-      >
-        Contact Diaspora Desk
-      </button>
     </div>
   );
 }
@@ -368,13 +381,11 @@ function Field({
           const isPhone = label.toLowerCase().includes("phone");
           if (!isPhone) return;
 
-          // Block whitespace & separators
           if ([" ", "-", "(", ")"].includes(e.key)) {
             e.preventDefault();
             return;
           }
 
-          // Block further digits/plus once we've hit the cap for the current prefix
           if (/^\d$/.test(e.key) || e.key === "+") {
             const el = e.target as HTMLInputElement;
             const selLen = (el.selectionEnd ?? 0) - (el.selectionStart ?? 0);

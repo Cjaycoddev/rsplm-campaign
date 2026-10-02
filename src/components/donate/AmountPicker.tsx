@@ -6,27 +6,25 @@ import type { Frequency } from "@/app/donate/page";
 import { validateAmount } from "@/lib/validation";
 
 const presetsKES = [500, 1000, 5000, 10000, 50000, 100000];
-const presetsUSD = [5, 10, 25, 50, 100, 250];
 
 export default function AmountPicker({
-  amount, currency, frequency, onAmountChange, onCurrencyChange, onFrequencyChange, onBack, onNext,
+  amount,
+  frequency,
+  onAmountChange,
+  onFrequencyChange,
+  onBack,
+  onNext,
 }: {
   amount: number;
-  currency: "KES" | "USD";
   frequency: Frequency;
   onAmountChange: (n: number) => void;
-  onCurrencyChange: (c: "KES" | "USD") => void;
   onFrequencyChange: (f: Frequency) => void;
   onBack: () => void;
   onNext: () => void;
 }) {
   const [touched, setTouched] = useState(false);
-  const error = touched ? validateAmount(amount, currency) : null;
-  const valid = !validateAmount(amount, currency);
-
-  const presets = currency === "KES" ? presetsKES : presetsUSD;
-  const symbol = currency === "KES" ? "KES" : "$";
-  const approx = currency === "KES" ? ` $${(amount / 129).toFixed(2)}` : ` KES ${(amount * 129).toLocaleString()}`;
+  const error = touched ? validateAmount(amount, "KES") : null;
+  const valid = !validateAmount(amount, "KES");
 
   const handleNext = () => {
     setTouched(true);
@@ -36,21 +34,10 @@ export default function AmountPicker({
   return (
     <div>
       <h2 className="font-display text-2xl font-bold text-green-deep">How much would you like to give?</h2>
-
-      <div className="mt-4 inline-flex rounded-full bg-ink/5 p-1">
-        {(["KES", "USD"] as const).map((c) => (
-          <button
-            key={c}
-            onClick={() => { onCurrencyChange(c); onAmountChange(0); setTouched(false); }}
-            className={`rounded-full px-5 py-1.5 text-sm font-semibold transition-all ${currency === c ? "bg-white text-green-deep shadow" : "text-ink/50 hover:text-green-deep"}`}
-          >
-            {c}
-          </button>
-        ))}
-      </div>
+      <p className="mt-1 text-sm text-ink/60">All donations are in Kenyan Shillings (KES).</p>
 
       <div className="mt-6 grid grid-cols-3 gap-3">
-        {presets.map((p) => (
+        {presetsKES.map((p) => (
           <button
             key={p}
             onClick={() => { onAmountChange(p); setTouched(false); }}
@@ -58,7 +45,7 @@ export default function AmountPicker({
               amount === p ? "border-gold bg-gold/10 text-green-deep shadow-gold" : "border-ink/10 text-ink hover:border-gold/50"
             }`}
           >
-            {symbol} {p.toLocaleString()}
+            KES {p.toLocaleString()}
           </button>
         ))}
       </div>
@@ -66,7 +53,7 @@ export default function AmountPicker({
       <div className="mt-4">
         <label className="text-sm font-medium text-ink/70">Or enter a custom amount</label>
         <div className={`mt-1 flex items-center rounded-xl border-2 bg-white px-4 transition-colors ${error ? "border-campaignred" : "border-ink/10 focus-within:border-gold"}`}>
-          <span className={`text-sm font-bold ${error ? "text-campaignred" : "text-ink/50"}`}>{symbol}</span>
+          <span className={`text-sm font-bold ${error ? "text-campaignred" : "text-ink/50"}`}>KES</span>
           <input
             type="number"
             min={1}
@@ -77,9 +64,6 @@ export default function AmountPicker({
             className="w-full bg-transparent py-3 pl-3 text-lg font-semibold outline-none"
           />
         </div>
-        {amount > 0 && !error && (
-          <div className="mt-1.5 text-xs text-ink/50">{approx}</div>
-        )}
         {error && (
           <div className="mt-1.5 flex items-start gap-1.5 text-xs font-medium text-campaignred">
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
@@ -113,7 +97,7 @@ export default function AmountPicker({
 
       {frequency === "MONTHLY" && (
         <div className="mt-3 rounded-2xl border border-gold/30 bg-gold/5 p-3 text-xs text-ink/70">
-          Monthly support via M-Pesa is a standing order  our team will send you a reminder each month.
+          Monthly support via M-Pesa is a standing order. Our team will send you a reminder each month.
         </div>
       )}
 

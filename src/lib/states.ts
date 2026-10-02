@@ -1,3 +1,5 @@
+import type { PhoneCountry } from "@/lib/validation";
+
 export const STATES: Record<string, string[]> = {
   "Central Equatoria": ["Juba", "Kajo Keji", "Lainya", "Morobo", "Terekeka", "Yei"],
   "Eastern Equatoria": ["Torit", "Budi", "Ikotos", "Kapoeta East", "Kapoeta North", "Kapoeta South", "Lafon", "Magwi"],
@@ -12,6 +14,29 @@ export const STATES: Record<string, string[]> = {
 };
 
 export const STATE_LIST = Object.keys(STATES);
+
+/** Kenya: former provinces as regions, 47 counties underneath. */
+export const KENYA_REGIONS: Record<string, string[]> = {
+  Nairobi: ["Nairobi"],
+  Central: ["Kiambu", "Kirinyaga", "Murang'a", "Nyandarua", "Nyeri"],
+  Coast: ["Kilifi", "Kwale", "Lamu", "Mombasa", "Taita-Taveta", "Tana River"],
+  Eastern: ["Embu", "Isiolo", "Kitui", "Machakos", "Makueni", "Marsabit", "Meru", "Tharaka-Nithi"],
+  "North Eastern": ["Garissa", "Mandera", "Wajir"],
+  Nyanza: ["Homa Bay", "Kisii", "Kisumu", "Migori", "Nyamira", "Siaya"],
+  "Rift Valley": [
+    "Baringo", "Bomet", "Elgeyo-Marakwet", "Kajiado", "Kericho", "Laikipia",
+    "Nakuru", "Nandi", "Narok", "Samburu", "Trans Nzoia", "Turkana", "Uasin Gishu", "West Pokot",
+  ],
+  Western: ["Bungoma", "Busia", "Kakamega", "Vihiga"],
+};
+
+export function locationsFor(country: PhoneCountry): Record<string, string[]> {
+  return country === "KE" ? KENYA_REGIONS : STATES;
+}
+
+export function isValidLocation(country: PhoneCountry, region: string, county: string): boolean {
+  return Boolean(locationsFor(country)[region]?.includes(county));
+}
 
 export const ROLES = [
   { id: "SUPPORTER", label: "Supporter", desc: "Card-carrying movement member" },

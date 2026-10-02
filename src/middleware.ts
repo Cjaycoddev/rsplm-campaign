@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { ADMIN_COOKIE, verifyAdminCookie } from "@/lib/admin-session";
+import { ADMIN_COOKIE, verifyAdminCookie } from "@/lib/admin-cookie";
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isAdminPage = path.startsWith("/admin") && path !== "/admin/login";
   const isAdminApi =
@@ -9,7 +9,7 @@ export function middleware(req: NextRequest) {
 
   if (!isAdminPage && !isAdminApi) return NextResponse.next();
 
-  if (!verifyAdminCookie(req.cookies.get(ADMIN_COOKIE)?.value)) {
+  if (!(await verifyAdminCookie(req.cookies.get(ADMIN_COOKIE)?.value))) {
     if (isAdminApi) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

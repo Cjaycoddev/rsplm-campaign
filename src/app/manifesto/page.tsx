@@ -46,7 +46,7 @@ export default function ManifestoPage() {
             Every promise here will be measured, tracked, and publicly reported."
           </blockquote>
           <div className="mt-6 text-sm font-semibold uppercase tracking-wider text-gold">
-             Hon. Nathaniel Garang&apos; Aduotdit
+             Hon. Nathaniel Garang&apos; Aduot
           </div>
         </div>
       </section>

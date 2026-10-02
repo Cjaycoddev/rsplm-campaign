@@ -19,14 +19,12 @@ interface PickedFile {
 export default function ProofUpload({
   reference,
   amount,
-  currency,
   cause,
   frequency,
   method,
 }: {
   reference: string;
   amount: number;
-  currency: "KES" | "USD";
   cause: Cause;
   frequency: Frequency;
   method: Method;
@@ -76,7 +74,7 @@ export default function ProofUpload({
       fd.set("name", name);
       fd.set("email", email);
       fd.set("amount", String(amount));
-      fd.set("currency", currency);
+      fd.set("currency", "KES");
       fd.set("cause", cause);
       fd.set("frequency", frequency);
       fd.set("method", method);
