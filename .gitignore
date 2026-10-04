@@ -48,3 +48,4 @@ next-env.d.ts
 # Uploads (proof files, temp)
 /uploads
 /tmp
+.vercel

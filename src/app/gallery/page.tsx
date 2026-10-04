@@ -7,16 +7,30 @@ import { Camera, X, ChevronLeft, ChevronRight, MapPin, Maximize2, Filter, Orbit 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import OrbitCarousel from "@/components/gallery/OrbitCarousel";
-import { GALLERY_ITEMS, ORBIT_ITEMS, CATEGORIES, type GalleryCategory } from "@/lib/gallery";
+import { GALLERY_ITEMS, ORBIT_ITEMS, CATEGORIES, type GalleryCategory, type GalleryItem } from "@/lib/gallery";
 
 export default function GalleryPage() {
   const [filter, setFilter] = useState<GalleryCategory>("All");
   const [index, setIndex] = useState<number | null>(null);
+  const [uploaded, setUploaded] = useState<GalleryItem[]>([]);
   const touchStartX = useRef<number | null>(null);
 
+  useEffect(() => {
+    fetch("/api/content/gallery")
+      .then((r) => r.json())
+      .then((d) => setUploaded(Array.isArray(d.items) ? d.items : []))
+      .catch(() => setUploaded([]));
+  }, []);
+
+  const catalog = useMemo(() => [...uploaded, ...GALLERY_ITEMS], [uploaded]);
+  const orbit = useMemo(() => {
+    const extra = uploaded.slice(0, 6).map((g) => ({ src: g.src, title: g.title, caption: g.location || g.caption }));
+    return extra.length ? [...extra, ...ORBIT_ITEMS].slice(0, 10) : [...ORBIT_ITEMS];
+  }, [uploaded]);
+
   const items = useMemo(() => {
-    return filter === "All" ? GALLERY_ITEMS : GALLERY_ITEMS.filter((g) => g.category === filter);
-  }, [filter]);
+    return filter === "All" ? catalog : catalog.filter((g) => g.category === filter);
+  }, [filter, catalog]);
 
   const close = useCallback(() => setIndex(null), []);
   const prev = useCallback(
@@ -101,7 +115,7 @@ export default function GalleryPage() {
               Hover to pause. Every face, every place  circling around the People First agenda.
             </p>
           </div>
-          <OrbitCarousel items={[...ORBIT_ITEMS]} />
+          <OrbitCarousel items={orbit} />
         </section>
 
         {/* FILTER BAR */}
@@ -110,7 +124,7 @@ export default function GalleryPage() {
             <Filter className="ml-2 hidden h-4 w-4 text-ink/40 sm:block" />
             {CATEGORIES.map((c) => {
               const active = filter === c;
-              const count = c === "All" ? GALLERY_ITEMS.length : GALLERY_ITEMS.filter((g) => g.category === c).length;
+              const count = c === "All" ? catalog.length : catalog.filter((g) => g.category === c).length;
               return (
                 <button
                   key={c}

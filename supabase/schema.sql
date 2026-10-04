@@ -1,4 +1,5 @@
 -- R-SPLM campaign schema. Run in Supabase SQL Editor.
+-- Then run supabase/cms.sql for gallery, media, and manifesto publishing.
 -- All public writes go through the Next.js API (service role). RLS stays locked.
 
 create extension if not exists pgcrypto;

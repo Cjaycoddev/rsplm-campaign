@@ -1,6 +1,7 @@
 import { isDarajaConfigured } from "@/lib/daraja";
 import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/admin";
 import AdminDashboard, { type AdminDonation, type AdminSupporter } from "@/components/admin/AdminDashboard";
+import { listGallery, listMedia, listManifestos } from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,9 @@ export default async function AdminPage() {
         sandbox: process.env.DARAJA_ENV !== "production",
         till: process.env.NEXT_PUBLIC_MPESA_TILL || process.env.DARAJA_SHORTCODE || null,
       }}
+      gallery={await listGallery()}
+      media={await listMedia()}
+      manifestos={await listManifestos()}
     />
   );
 }

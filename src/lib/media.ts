@@ -7,6 +7,7 @@ export interface MediaItem {
   category: string;
   author?: string;
   readTime?: string;
+  url?: string;
 }
 
 export const MEDIA_ITEMS: MediaItem[] = [
@@ -77,4 +78,4 @@ export const MEDIA_ITEMS: MediaItem[] = [
     readTime: "6 min read",
   },
 ];
-export const CATEGORIES = ["All", "Campaign", "Diaspora", "Vision", "Policy", "Agriculture"] as const;
+export const CATEGORIES = ["All", "Campaign", "Award", "Justice", "Diplomacy", "Diaspora", "Vision", "Policy", "Agriculture"] as const;

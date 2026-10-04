@@ -10,6 +10,8 @@ import {
 import LogoutButton from "@/components/admin/LogoutButton";
 import DonationReview from "@/components/admin/DonationReview";
 import MessageComposer from "@/components/admin/MessageComposer";
+import AdminContent from "@/components/admin/AdminContent";
+import type { GalleryRow, MediaRow, ManifestoRow } from "@/lib/cms";
 
 export type AdminSupporter = {
   id: string;
@@ -74,6 +76,9 @@ export default function AdminDashboard({
   paidTotal,
   paidCount,
   daraja,
+  gallery,
+  media,
+  manifestos,
 }: {
   supporters: AdminSupporter[];
   donations: AdminDonation[];
@@ -82,13 +87,16 @@ export default function AdminDashboard({
   paidTotal: number;
   paidCount: number;
   daraja: { configured: boolean; sandbox: boolean; till: string | null };
+  gallery: GalleryRow[];
+  media: MediaRow[];
+  manifestos: ManifestoRow[];
 }) {
   const [q, setQ] = useState("");
   const [country, setCountry] = useState("all");
   const [region, setRegion] = useState("all");
   const [role, setRole] = useState("all");
   const [donStatus, setDonStatus] = useState("all");
-  const [tab, setTab] = useState<"overview" | "people" | "money" | "email">("overview");
+  const [tab, setTab] = useState<"overview" | "people" | "money" | "email" | "content">("overview");
 
   const regions = useMemo(
     () => Array.from(new Set(supporters.map((s) => s.state))).sort(),
@@ -204,7 +212,7 @@ export default function AdminDashboard({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {(["overview", "people", "money", "email"] as const).map((t) => (
+          {(["overview", "people", "money", "email", "content"] as const).map((t) => (
             <button
               key={t}
               type="button"
@@ -413,6 +421,8 @@ export default function AdminDashboard({
             </div>
           </section>
         )}
+
+        {tab === "content" && <AdminContent gallery={gallery} media={media} manifestos={manifestos} />}
       </div>
     </main>
   );

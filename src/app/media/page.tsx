@@ -1,25 +1,39 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { Newspaper, PenLine, ArrowRight, Calendar, Clock, User, Filter , ExternalLink } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { MEDIA_ITEMS, CATEGORIES } from "@/lib/media";
+import { MEDIA_ITEMS, CATEGORIES, type MediaItem } from "@/lib/media";
 
 type Tab = "all" | "press" | "blog";
 
 export default function MediaPage() {
   const [tab, setTab] = useState<Tab>("all");
   const [category, setCategory] = useState<string>("All");
+  const [uploaded, setUploaded] = useState<MediaItem[]>([]);
+
+  useEffect(() => {
+    fetch("/api/content/media")
+      .then((r) => r.json())
+      .then((d) => setUploaded(Array.isArray(d.items) ? d.items : []))
+      .catch(() => setUploaded([]));
+  }, []);
+
+  const catalog = useMemo(() => [...uploaded, ...MEDIA_ITEMS], [uploaded]);
+  const categories = useMemo(() => {
+    const extra = catalog.map((m) => m.category).filter(Boolean);
+    return Array.from(new Set(["All", ...CATEGORIES.filter((c) => c !== "All"), ...extra]));
+  }, [catalog]);
 
   const filtered = useMemo(() => {
-    return MEDIA_ITEMS.filter((m) => {
+    return catalog.filter((m) => {
       const tabOk = tab === "all" || m.type === tab;
       const catOk = category === "All" || m.category === category;
       return tabOk && catOk;
     });
-  }, [tab, category]);
+  }, [tab, category, catalog]);
 
   return (
     <>
@@ -74,7 +88,7 @@ export default function MediaPage() {
               {/* Category pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
                 <Filter className="h-4 w-4 flex-shrink-0 text-ink/40" />
-                {CATEGORIES.map((c) => (
+                {categories.map((c) => (
                   <button
                     key={c}
                     onClick={() => setCategory(c)}

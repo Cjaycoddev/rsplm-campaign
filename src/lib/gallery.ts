@@ -5,7 +5,7 @@ export interface GalleryItem {
   title: string;
   caption: string;
   span: "wide" | "tall" | "normal";
-  category: Exclude<GalleryCategory, "All">;
+  category: string;
   location?: string;
 }
 
