@@ -28,7 +28,7 @@ function EngagementDonutBase() {
                 border: "1px solid #0E6B2F20",
                 fontSize: 13,
               }}
-              formatter={(v: number) => v.toLocaleString()}
+              formatter={(v) => Number(v ?? 0).toLocaleString()}
             />
           </PieChart>
         </ResponsiveContainer>

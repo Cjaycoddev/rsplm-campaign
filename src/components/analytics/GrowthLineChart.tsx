@@ -50,9 +50,11 @@ function GrowthLineChartBase() {
               fontSize: 13,
               boxShadow: "0 8px 24px -8px rgba(11,93,42,0.2)",
             }}
-            formatter={(v: number, _n, ctx: any) => [
-              v.toLocaleString(),
-              ctx?.payload?.type === "projected" ? "Projected Supporters" : "Supporters",
+            formatter={(v, _n, ctx) => [
+              Number(v ?? 0).toLocaleString(),
+              (ctx as { payload?: { type?: string } })?.payload?.type === "projected"
+                ? "Projected Supporters"
+                : "Supporters",
             ]}
           />
           <Area

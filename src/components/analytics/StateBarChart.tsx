@@ -46,7 +46,10 @@ function StateBarChartBase() {
               fontSize: 13,
               boxShadow: "0 8px 24px -8px rgba(11,93,42,0.2)",
             }}
-            formatter={(v: number, n: string) => [v.toLocaleString(), n === "supporters" ? "Supporters" : "Registered Voters"]}
+            formatter={(v, n) => [
+              Number(v ?? 0).toLocaleString(),
+              n === "supporters" ? "Supporters" : "Registered Voters",
+            ]}
             labelFormatter={(label) => data.find((d) => d.name === label)?.full ?? label}
           />
           <Bar dataKey="supporters" radius={[0, 8, 8, 0]} maxBarSize={22}>

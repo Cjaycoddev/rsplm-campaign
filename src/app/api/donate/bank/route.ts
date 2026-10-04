@@ -109,7 +109,7 @@ export async function POST(req: Request) {
   }
 
   if (email) {
-    void sendTransactionalEmail({
+    await sendTransactionalEmail({
       to: email,
       toName: displayName,
       subject: "We received your payment proof",

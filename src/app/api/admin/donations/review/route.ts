@@ -28,7 +28,7 @@ export async function POST(req: Request) {
   if (error) return NextResponse.json({ error: "Could not update donation." }, { status: 500 });
 
   if (action === "confirm" && data.email) {
-    void sendTransactionalEmail({
+    await sendTransactionalEmail({
       to: data.email,
       toName: data.display_name,
       subject: "Thank you for your contribution",

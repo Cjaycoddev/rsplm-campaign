@@ -1,7 +1,13 @@
+import { after } from "next/server";
+
 const BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
 export function isBrevoConfigured(): boolean {
   return Boolean(process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL);
+}
+
+function wrapHtml(inner: string): string {
+  return `<!DOCTYPE html><html><body style="font-family:Georgia,serif;color:#111418;line-height:1.5">${inner}</body></html>`;
 }
 
 export async function sendTransactionalEmail(opts: {
@@ -10,7 +16,10 @@ export async function sendTransactionalEmail(opts: {
   subject: string;
   html: string;
 }): Promise<{ ok: boolean; skipped?: boolean; error?: string }> {
-  if (!isBrevoConfigured()) return { ok: true, skipped: true };
+  if (!isBrevoConfigured()) {
+    console.warn("brevo skipped: missing BREVO_API_KEY or BREVO_SENDER_EMAIL");
+    return { ok: true, skipped: true };
+  }
 
   const res = await fetch(BREVO_URL, {
     method: "POST",
@@ -26,15 +35,26 @@ export async function sendTransactionalEmail(opts: {
       },
       to: [{ email: opts.to, name: opts.toName }],
       subject: opts.subject,
-      htmlContent: opts.html,
+      htmlContent: wrapHtml(opts.html),
     }),
   });
 
   if (!res.ok) {
     const text = await res.text();
+    console.error("brevo send failed", res.status, text.slice(0, 500));
     return { ok: false, error: text.slice(0, 500) };
   }
   return { ok: true };
+}
+
+/** Keeps the send alive on Vercel after the HTTP response is sent. */
+export function queueTransactionalEmail(opts: {
+  to: string;
+  toName?: string;
+  subject: string;
+  html: string;
+}) {
+  after(() => sendTransactionalEmail(opts));
 }
 
 export function welcomeHtml(name: string): string {
@@ -50,7 +70,7 @@ export function donationThanksHtml(name: string, reference: string, amountLabel:
   return `
     <p>Dear ${escapeHtml(name)},</p>
     <p>Thank you for your contribution of <strong>${escapeHtml(amountLabel)}</strong>.</p>
-    <p>Reference: <strong>${escapeHtml(reference)}</strong></p>
+    <p>We have confirmed your payment. Reference: <strong>${escapeHtml(reference)}</strong></p>
     <p>Your support fuels grassroots mobilization across South Sudan.</p>
     <p>People First.</p>
   `;

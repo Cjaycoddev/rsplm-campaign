@@ -100,7 +100,7 @@ export async function POST(req: Request) {
   }
 
   if (email) {
-    void sendTransactionalEmail({
+    await sendTransactionalEmail({
       to: email,
       toName: displayName,
       subject: "Thank you for joining People First",

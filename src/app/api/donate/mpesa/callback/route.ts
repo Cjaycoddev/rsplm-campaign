@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/admin";
-import { sendTransactionalEmail, donationThanksHtml } from "@/lib/brevo";
+import { queueTransactionalEmail, donationThanksHtml } from "@/lib/brevo";
 
 type CallbackBody = {
   Body?: {
@@ -56,7 +56,7 @@ export async function POST(req: Request) {
     .eq("checkout_request_id", cb.CheckoutRequestID);
 
   if (paid && row?.email) {
-    void sendTransactionalEmail({
+    queueTransactionalEmail({
       to: row.email,
       toName: row.display_name,
       subject: "Thank you for your contribution",
