@@ -6,12 +6,25 @@ import {
 } from "recharts";
 import {
   Download, Search, Users, Heart, Banknote, Clock, Filter,
+  LayoutDashboard, Mail, Images, X,
 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import LogoutButton from "@/components/admin/LogoutButton";
 import DonationReview from "@/components/admin/DonationReview";
 import MessageComposer from "@/components/admin/MessageComposer";
 import AdminContent from "@/components/admin/AdminContent";
+import { AdminToastProvider } from "@/components/admin/AdminToast";
 import type { GalleryRow, MediaRow, ManifestoRow } from "@/lib/cms";
+
+type Tab = "overview" | "people" | "money" | "email" | "content";
+
+const NAV: { id: Tab; label: string; hint: string; icon: typeof Users }[] = [
+  { id: "overview", label: "Overview", hint: "Charts and totals", icon: LayoutDashboard },
+  { id: "people", label: "People", hint: "Supporters list", icon: Users },
+  { id: "money", label: "Donations", hint: "KES and proofs", icon: Banknote },
+  { id: "email", label: "Email", hint: "Brevo broadcasts", icon: Mail },
+  { id: "content", label: "Site content", hint: "Gallery, press, blog, manifesto", icon: Images },
+];
 
 export type AdminSupporter = {
   id: string;
@@ -96,7 +109,9 @@ export default function AdminDashboard({
   const [region, setRegion] = useState("all");
   const [role, setRole] = useState("all");
   const [donStatus, setDonStatus] = useState("all");
-  const [tab, setTab] = useState<"overview" | "people" | "money" | "email" | "content">("overview");
+  const [tab, setTab] = useState<Tab>("overview");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const active = NAV.find((n) => n.id === tab)!;
 
   const regions = useMemo(
     () => Array.from(new Set(supporters.map((s) => s.state))).sort(),
@@ -146,15 +161,19 @@ export default function AdminDashboard({
   const ssCount = supporters.filter((s) => s.phone_country === "SS").length;
 
   return (
+    <AdminToastProvider>
     <main className="min-h-screen bg-[radial-gradient(ellipse_at_top,_#F4EFE2,_#E8F0EA_45%,_#F7F4EC)] pb-16">
-      <header className="bg-hero-gradient px-4 py-8 text-white sm:px-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold">Hon. Nathaniel Garang&apos; Aduot</div>
-            <h1 className="mt-1 font-display text-3xl font-bold">Campaign command</h1>
-            <p className="mt-1 text-sm text-white/70">Live people, KES, and field coverage.</p>
+      <header className="bg-hero-gradient px-4 py-6 text-white sm:px-8">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Hamburger open={menuOpen} onClick={() => setMenuOpen((v) => !v)} />
+            <div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold">Hon. Nathaniel Garang&apos; Aduot</div>
+              <h1 className="font-display text-2xl font-bold sm:text-3xl">Campaign command</h1>
+              <p className="text-xs text-white/70 sm:text-sm">{active.label} · {active.hint}</p>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center justify-end gap-2">
             <span className={`rounded-full px-3 py-1 text-xs font-semibold ${daraja.configured ? "bg-gold/20 text-gold" : "bg-white/10 text-white/70"}`}>
               M-Pesa {daraja.configured ? (daraja.sandbox ? `sandbox · ${daraja.till || "174379"}` : `live · ${daraja.till}`) : "not configured"}
             </span>
@@ -162,6 +181,67 @@ export default function AdminDashboard({
           </div>
         </div>
       </header>
+
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.button
+              type="button"
+              aria-label="Close menu"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40 bg-ink/50 backdrop-blur-sm"
+              onClick={() => setMenuOpen(false)}
+            />
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              className="fixed bottom-0 left-0 top-0 z-50 flex w-[min(20rem,86vw)] flex-col bg-green-deep text-white shadow-[12px_0_40px_-12px_rgba(0,0,0,0.45)]"
+            >
+              <div className="flex items-center justify-between border-b border-white/10 px-5 py-5">
+                <div>
+                  <div className="text-[10px] font-bold uppercase tracking-[0.28em] text-gold">Menu</div>
+                  <div className="font-display text-xl font-bold">Navigate</div>
+                </div>
+                <button type="button" onClick={() => setMenuOpen(false)} className="rounded-full bg-white/10 p-2 hover:bg-gold hover:text-ink" aria-label="Close">
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <nav className="flex-1 space-y-1 overflow-y-auto p-3">
+                {NAV.map((item, i) => {
+                  const Icon = item.icon;
+                  const on = tab === item.id;
+                  return (
+                    <motion.button
+                      key={item.id}
+                      type="button"
+                      initial={{ x: -16, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.04 * i }}
+                      onClick={() => {
+                        setTab(item.id);
+                        setMenuOpen(false);
+                      }}
+                      className={`flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-left transition-colors ${
+                        on ? "bg-gold text-ink shadow-gold" : "text-white/85 hover:bg-white/10"
+                      }`}
+                    >
+                      <Icon className="h-5 w-5 shrink-0" />
+                      <span>
+                        <span className="block text-sm font-semibold">{item.label}</span>
+                        <span className={`block text-[11px] ${on ? "text-ink/60" : "text-white/50"}`}>{item.hint}</span>
+                      </span>
+                    </motion.button>
+                  );
+                })}
+              </nav>
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
 
       <div className="mx-auto max-w-6xl space-y-6 px-4 py-8 sm:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -200,31 +280,22 @@ export default function AdminDashboard({
             <option value="CAMPAIGN_AGENT">Campaign agent</option>
             <option value="DONOR">Donor</option>
           </select>
-          <select value={donStatus} onChange={(e) => setDonStatus(e.target.value)} className="rounded-xl border-2 border-ink/10 px-3 py-2 text-sm">
-            <option value="all">All gift statuses</option>
-            <option value="paid">Paid</option>
-            <option value="needs_review">Needs review</option>
-            <option value="stk_sent">STK sent</option>
-            <option value="pending">Pending</option>
-            <option value="failed">Failed</option>
-            <option value="rejected">Rejected</option>
-          </select>
+          {tab === "money" && (
+            <select value={donStatus} onChange={(e) => setDonStatus(e.target.value)} className="rounded-xl border-2 border-ink/10 px-3 py-2 text-sm">
+              <option value="all">All gift statuses</option>
+              <option value="paid">Paid</option>
+              <option value="needs_review">Needs review</option>
+              <option value="stk_sent">STK sent</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          )}
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          {(["overview", "people", "money", "email", "content"] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={`rounded-full px-4 py-2 text-sm font-semibold capitalize ${
-                tab === t ? "bg-green-deep text-white" : "bg-white text-ink/70 hover:text-green-deep"
-              }`}
-            >
-              {t === "money" ? "Donations" : t}
-            </button>
-          ))}
-          <div className="ml-auto flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="mr-auto font-display text-lg font-bold text-green-deep">{active.label}</div>
+          <div className="flex flex-wrap gap-2">
             <CsvBtn
               label="Contacts CSV"
               onClick={() =>
@@ -425,6 +496,35 @@ export default function AdminDashboard({
         {tab === "content" && <AdminContent gallery={gallery} media={media} manifestos={manifestos} />}
       </div>
     </main>
+    </AdminToastProvider>
+  );
+}
+
+function Hamburger({ open, onClick }: { open: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={open}
+      aria-label={open ? "Close menu" : "Open menu"}
+      className="relative flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl border border-white/20 bg-white/10 transition-transform duration-300 hover:border-gold hover:bg-gold/20 active:scale-95"
+    >
+      <span
+        className={`absolute h-0.5 w-6 rounded-full bg-gold transition-all duration-300 ${
+          open ? "translate-y-0 rotate-45" : "-translate-y-2"
+        }`}
+      />
+      <span
+        className={`absolute h-0.5 w-6 rounded-full bg-white transition-all duration-300 ${
+          open ? "scale-x-0 opacity-0" : "scale-x-100 opacity-100"
+        }`}
+      />
+      <span
+        className={`absolute h-0.5 w-6 rounded-full bg-gold transition-all duration-300 ${
+          open ? "translate-y-0 -rotate-45" : "translate-y-2"
+        }`}
+      />
+    </button>
   );
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useAdminToast } from "@/components/admin/AdminToast";
 
 const AUDIENCES = [
   { id: "all", label: "All with email opt-in" },
@@ -18,6 +19,7 @@ export default function MessageComposer() {
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const toast = useAdminToast();
 
   const send = async () => {
     setBusy(true);
@@ -32,13 +34,16 @@ export default function MessageComposer() {
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Could not send.");
+        toast(data.error || "Could not send email.", "err");
         return;
       }
       setResult(`Sent ${data.sent} of ${data.total} emails.`);
+      toast(`Sent ${data.sent} of ${data.total} emails.`);
       setSubject("");
       setBody("");
     } catch {
       setError("Network error.");
+      toast("Could not send email.", "err");
     } finally {
       setBusy(false);
     }

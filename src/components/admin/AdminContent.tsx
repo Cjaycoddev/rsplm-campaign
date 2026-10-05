@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Camera, Newspaper, BookOpen, Upload } from "lucide-react";
+import { Camera, Newspaper, PenLine, BookOpen, Upload, Calendar } from "lucide-react";
 import { GALLERY_CATS, MEDIA_CATS, publicObjectUrl, type GalleryRow, type MediaRow, type ManifestoRow } from "@/lib/cms";
 import { PILLARS, type Pillar } from "@/lib/manifesto";
+import { useAdminToast } from "@/components/admin/AdminToast";
+import ComposerToggle, { SlideComposer } from "@/components/admin/ComposerToggle";
 
-type Sub = "gallery" | "media" | "manifesto";
+type Sub = "gallery" | "press" | "blog" | "manifesto";
 
 export default function AdminContent({
   gallery,
@@ -25,7 +27,8 @@ export default function AdminContent({
         {(
           [
             ["gallery", "Gallery", Camera],
-            ["media", "Media", Newspaper],
+            ["press", "Press", Newspaper],
+            ["blog", "Blog", PenLine],
             ["manifesto", "Manifesto", BookOpen],
           ] as const
         ).map(([id, label, Icon]) => (
@@ -43,7 +46,8 @@ export default function AdminContent({
       </div>
       <div className="mt-6">
         {sub === "gallery" && <GalleryAdmin items={gallery} />}
-        {sub === "media" && <MediaAdmin items={media} />}
+        {sub === "press" && <MediaAdmin items={media} kind="press" />}
+        {sub === "blog" && <MediaAdmin items={media} kind="blog" />}
         {sub === "manifesto" && <ManifestoAdmin items={manifestos} />}
       </div>
     </section>
@@ -52,8 +56,10 @@ export default function AdminContent({
 
 function GalleryAdmin({ items }: { items: GalleryRow[] }) {
   const router = useRouter();
+  const toast = useAdminToast();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(true);
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,9 +70,12 @@ function GalleryAdmin({ items }: { items: GalleryRow[] }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
       (e.target as HTMLFormElement).reset();
+      toast("Photo uploaded.");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      const msg = err instanceof Error ? err.message : "Upload failed";
+      setError(msg);
+      toast(msg, "err");
     } finally {
       setBusy(false);
     }
@@ -74,10 +83,14 @@ function GalleryAdmin({ items }: { items: GalleryRow[] }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-ink/60">
-        Photos go into a masonry grid with the existing campaign shots. Caption sits on the image. Pull down hides it from the public site without deleting.
-      </p>
-      <form onSubmit={submit} className="grid gap-3 rounded-2xl border border-ink/10 bg-ivory/60 p-4 sm:grid-cols-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-ink/60">
+          Photos go into a masonry grid with the existing campaign shots. Pull down hides it from the public site.
+        </p>
+        <ComposerToggle open={showForm} onToggle={() => setShowForm((v) => !v)} showLabel="Show upload form" hideLabel="Hide upload form" />
+      </div>
+      <SlideComposer open={showForm}>
+      <form onSubmit={submit} className="mb-2 grid gap-3 rounded-2xl border border-ink/10 bg-ivory/60 p-4 sm:grid-cols-2">
         <label className="text-sm font-medium sm:col-span-2">
           Image
           <input name="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required className="mt-1 block w-full text-sm" />
@@ -108,6 +121,7 @@ function GalleryAdmin({ items }: { items: GalleryRow[] }) {
           </button>
         </div>
       </form>
+      </SlideComposer>
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (
           <li key={item.id} className="overflow-hidden rounded-2xl border border-ink/10 bg-white">
@@ -126,8 +140,16 @@ function GalleryAdmin({ items }: { items: GalleryRow[] }) {
               <div className="text-xs text-ink/60">{item.caption || item.category}</div>
               <ToggleRow
                 published={item.published}
-                onToggle={() => patch(`/api/admin/gallery/${item.id}`, { published: !item.published }, router)}
-                onDelete={() => del(`/api/admin/gallery/${item.id}`, router)}
+                onToggle={() =>
+                  act(
+                    `/api/admin/gallery/${item.id}`,
+                    { published: !item.published },
+                    router,
+                    toast,
+                    item.published ? "Photo pulled down." : "Photo is live again."
+                  )
+                }
+                onDelete={() => remove(`/api/admin/gallery/${item.id}`, router, toast, "Photo deleted.")}
               />
             </div>
           </li>
@@ -138,10 +160,14 @@ function GalleryAdmin({ items }: { items: GalleryRow[] }) {
   );
 }
 
-function MediaAdmin({ items }: { items: MediaRow[] }) {
+function MediaAdmin({ items, kind }: { items: MediaRow[]; kind: "press" | "blog" }) {
   const router = useRouter();
+  const toast = useAdminToast();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(true);
+  const isBlog = kind === "blog";
+  const list = items.filter((item) => item.kind === kind);
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -152,9 +178,12 @@ function MediaAdmin({ items }: { items: MediaRow[] }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
       (e.target as HTMLFormElement).reset();
+      toast(isBlog ? "Blog published." : "News post uploaded.");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Save failed");
+      const msg = err instanceof Error ? err.message : "Save failed";
+      setError(msg);
+      toast(msg, "err");
     } finally {
       setBusy(false);
     }
@@ -162,21 +191,27 @@ function MediaAdmin({ items }: { items: MediaRow[] }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-ink/60">
-        Add a press clipping or blog note with a category and optional link. The public media page filters by those categories.
-      </p>
-      <form onSubmit={submit} className="grid gap-3 rounded-2xl border border-ink/10 bg-ivory/60 p-4 sm:grid-cols-2">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-ink/60">
+          {isBlog
+            ? "Write a campaign blog. Pick a category so it appears under that filter on Press & Media."
+            : "Add a press clipping. Pick a category so it appears under that filter on Press & Media."}
+        </p>
+        <ComposerToggle open={showForm} onToggle={() => setShowForm((v) => !v)} showLabel="Show editor" hideLabel="Hide editor" />
+      </div>
+      <SlideComposer open={showForm}>
+      <form onSubmit={submit} className="mb-2 grid gap-3 rounded-2xl border border-ink/10 bg-ivory/60 p-4 sm:grid-cols-2">
+        <input type="hidden" name="kind" value={kind} />
         <Field name="title" label="Headline" required className="sm:col-span-2" />
+        {isBlog && (
+          <label className="text-sm font-medium sm:col-span-2">
+            Blog post
+            <textarea name="body" required rows={8} placeholder="Write the full post…" className="mt-1 w-full rounded-xl border-2 border-ink/10 px-3 py-2 text-sm" />
+          </label>
+        )}
         <label className="text-sm font-medium sm:col-span-2">
-          Excerpt
-          <textarea name="excerpt" required rows={3} className="mt-1 w-full rounded-xl border-2 border-ink/10 px-3 py-2 text-sm" />
-        </label>
-        <label className="text-sm font-medium">
-          Type
-          <select name="kind" className="mt-1 w-full rounded-xl border-2 border-ink/10 px-3 py-2 text-sm">
-            <option value="press">Press</option>
-            <option value="blog">Blog</option>
-          </select>
+          {isBlog ? "Short excerpt (optional — used on the card)" : "Excerpt"}
+          <textarea name="excerpt" required={!isBlog} rows={3} className="mt-1 w-full rounded-xl border-2 border-ink/10 px-3 py-2 text-sm" />
         </label>
         <label className="text-sm font-medium">
           Category
@@ -186,27 +221,37 @@ function MediaAdmin({ items }: { items: MediaRow[] }) {
             ))}
           </select>
         </label>
-        <Field name="url" label="Public link (optional)" placeholder="https://" />
-        <Field name="author" label="Author (optional)" />
-        <Field name="date_label" label="Date label" placeholder="October 4, 2026" />
+        {isBlog ? (
+          <Field name="author" label="Author (optional)" placeholder="Hon. Nathaniel Garang Aduot" />
+        ) : (
+          <Field name="url" label="Article link (optional)" placeholder="https://" />
+        )}
+        <DatePickerField />
         <label className="text-sm font-medium">
-          Cover image (optional)
+          Cover image {isBlog ? "" : "(optional)"}
           <input name="file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="mt-1 block w-full text-sm" />
         </label>
         <div className="sm:col-span-2">
           {error && <p className="mb-2 text-sm text-campaignred">{error}</p>}
           <button type="submit" disabled={busy} className="btn-gold text-sm disabled:opacity-40">
-            {busy ? "Saving..." : "Publish to media"}
+            {busy ? "Saving..." : isBlog ? "Publish blog" : "Publish to press"}
           </button>
         </div>
       </form>
+      </SlideComposer>
       <ul className="space-y-3">
-        {items.map((item) => (
+        {list.map((item) => (
           <li key={item.id} className="rounded-2xl border border-ink/10 p-4">
             <div className="flex flex-wrap items-start justify-between gap-2">
-              <div>
+              <div className="flex min-w-0 flex-1 gap-3">
+                {item.cover_path && publicObjectUrl(item.cover_path) && (
+                  <div className="relative h-16 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-ink/5">
+                    <Image src={publicObjectUrl(item.cover_path)!} alt="" fill className="object-contain" sizes="96px" />
+                  </div>
+                )}
+                <div className="min-w-0">
                 <div className="text-[10px] font-bold uppercase tracking-wider text-gold">
-                  {item.kind} · {item.category} {item.published ? "" : "· pulled down"}
+                  {item.category} {item.published ? "" : "· pulled down"}
                 </div>
                 <div className="font-display font-bold text-green-deep">{item.title}</div>
                 <p className="mt-1 text-sm text-ink/60">{item.excerpt}</p>
@@ -215,16 +260,36 @@ function MediaAdmin({ items }: { items: MediaRow[] }) {
                     {item.url}
                   </a>
                 )}
+                </div>
               </div>
             </div>
             <ToggleRow
               published={item.published}
-              onToggle={() => patch(`/api/admin/media/${item.id}`, { published: !item.published }, router)}
-              onDelete={() => del(`/api/admin/media/${item.id}`, router)}
+              onToggle={() =>
+                act(
+                  `/api/admin/media/${item.id}`,
+                  { published: !item.published },
+                  router,
+                  toast,
+                  isBlog
+                    ? item.published ? "Blog pulled down." : "Blog is live again."
+                    : item.published ? "News post pulled down." : "News post is live again."
+                )
+              }
+              onDelete={() =>
+                remove(
+                  `/api/admin/media/${item.id}`,
+                  router,
+                  toast,
+                  isBlog ? "Blog deleted." : "News post deleted."
+                )
+              }
             />
           </li>
         ))}
-        {!items.length && <li className="text-sm text-ink/50">No media posts yet.</li>}
+        {!list.length && (
+          <li className="text-sm text-ink/50">{isBlog ? "No blogs yet." : "No press posts yet."}</li>
+        )}
       </ul>
     </div>
   );
@@ -232,8 +297,10 @@ function MediaAdmin({ items }: { items: MediaRow[] }) {
 
 function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
   const router = useRouter();
+  const toast = useAdminToast();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(true);
   const [title, setTitle] = useState("Nine Pillars of Change");
   const [intro, setIntro] = useState(
     "A bold, actionable plan to transform South Sudan — rooted in reform, unity, and the aspirations of its people."
@@ -255,9 +322,12 @@ function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
       const res = await fetch("/api/admin/manifesto", { method: "POST", body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Could not save draft");
+      toast("Manifesto draft saved.");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not save draft");
+      const msg = err instanceof Error ? err.message : "Could not save draft";
+      setError(msg);
+      toast(msg, "err");
     } finally {
       setBusy(false);
     }
@@ -265,9 +335,14 @@ function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-ink/60">
-        Draft the election manifesto here. Saving keeps it private. Publish replaces the public Manifesto page. Pull down restores the original nine pillars.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-ink/60">
+          Draft privately, then publish to replace the public Manifesto page. Pull down restores the original nine pillars.
+        </p>
+        <ComposerToggle open={showForm} onToggle={() => setShowForm((v) => !v)} showLabel="Show draft editor" hideLabel="Hide draft editor" />
+      </div>
+      <SlideComposer open={showForm}>
+      <div className="space-y-4">
       <div className="grid gap-3">
         <label className="text-sm font-medium">
           Title
@@ -336,6 +411,8 @@ function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
       <button type="button" disabled={busy} onClick={saveDraft} className="btn-gold text-sm disabled:opacity-40">
         {busy ? "Saving..." : "Save as draft"}
       </button>
+      </div>
+      </SlideComposer>
 
       <h3 className="font-display text-lg font-bold text-green-deep">Saved versions</h3>
       <ul className="space-y-3">
@@ -351,7 +428,7 @@ function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
                 <button
                   type="button"
                   className="rounded-full bg-green-deep px-4 py-2 text-xs font-semibold text-white"
-                  onClick={() => patch(`/api/admin/manifesto/${m.id}`, { action: "publish" }, router)}
+                  onClick={() => act(`/api/admin/manifesto/${m.id}`, { action: "publish" }, router, toast, "Manifesto published.")}
                 >
                   Publish to site
                 </button>
@@ -360,7 +437,7 @@ function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
                 <button
                   type="button"
                   className="rounded-full border-2 border-campaignred/30 px-4 py-2 text-xs font-semibold text-campaignred"
-                  onClick={() => patch(`/api/admin/manifesto/${m.id}`, { action: "unpublish" }, router)}
+                  onClick={() => act(`/api/admin/manifesto/${m.id}`, { action: "unpublish" }, router, toast, "Manifesto pulled down.")}
                 >
                   Pull down
                 </button>
@@ -376,6 +453,25 @@ function ManifestoAdmin({ items }: { items: ManifestoRow[] }) {
 
 function edit(list: Pillar[], i: number, patch: Partial<Pillar>): Pillar[] {
   return list.map((p, idx) => (idx === i ? { ...p, ...patch } : p));
+}
+
+function DatePickerField() {
+  const today = new Date();
+  const value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  return (
+    <label className="relative z-10 block min-w-0 text-sm font-medium sm:col-span-2">
+      Date
+      <span className="relative mt-1 block">
+        <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-green-deep" />
+        <input
+          type="date"
+          name="date_label"
+          defaultValue={value}
+          className="block w-full min-h-[44px] min-w-0 rounded-xl border-2 border-ink/10 bg-white py-2 pl-10 pr-3 text-sm text-ink outline-none [color-scheme:light] focus:border-gold"
+        />
+      </span>
+    </label>
+  );
 }
 
 function Field({
@@ -425,13 +521,34 @@ function ToggleRow({
   );
 }
 
-async function patch(url: string, body: object, router: ReturnType<typeof useRouter>) {
-  await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+async function act(
+  url: string,
+  body: object,
+  router: ReturnType<typeof useRouter>,
+  toast: (msg: string, kind?: "ok" | "err") => void,
+  okMsg: string
+) {
+  const res = await fetch(url, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  if (!res.ok) {
+    toast("Could not complete that action.", "err");
+    return;
+  }
+  toast(okMsg);
   router.refresh();
 }
 
-async function del(url: string, router: ReturnType<typeof useRouter>) {
+async function remove(
+  url: string,
+  router: ReturnType<typeof useRouter>,
+  toast: (msg: string, kind?: "ok" | "err") => void,
+  okMsg: string
+) {
   if (!confirm("Remove this permanently?")) return;
-  await fetch(url, { method: "DELETE" });
+  const res = await fetch(url, { method: "DELETE" });
+  if (!res.ok) {
+    toast("Could not delete.", "err");
+    return;
+  }
+  toast(okMsg);
   router.refresh();
 }

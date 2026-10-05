@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAdminToast } from "@/components/admin/AdminToast";
 
 type Proof = { id: string; file_name: string; url: string | null };
 
@@ -15,6 +16,7 @@ export default function DonationReview({
   proofs: Proof[];
 }) {
   const router = useRouter();
+  const toast = useAdminToast();
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,8 +33,10 @@ export default function DonationReview({
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || "Could not update.");
+        toast(data.error || "Could not update.", "err");
         return;
       }
+      toast(action === "confirm" ? "Donation marked paid. Thank-you email queued." : "Donation rejected.");
       router.refresh();
     } catch {
       setError("Network error.");

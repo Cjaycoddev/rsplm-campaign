@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Newspaper, PenLine, ArrowRight, Calendar, Clock, User, Filter , ExternalLink } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -22,10 +23,6 @@ export default function MediaPage() {
   }, []);
 
   const catalog = useMemo(() => [...uploaded, ...MEDIA_ITEMS], [uploaded]);
-  const categories = useMemo(() => {
-    const extra = catalog.map((m) => m.category).filter(Boolean);
-    return Array.from(new Set(["All", ...CATEGORIES.filter((c) => c !== "All"), ...extra]));
-  }, [catalog]);
 
   const filtered = useMemo(() => {
     return catalog.filter((m) => {
@@ -88,7 +85,7 @@ export default function MediaPage() {
               {/* Category pills */}
               <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
                 <Filter className="h-4 w-4 flex-shrink-0 text-ink/40" />
-                {categories.map((c) => (
+                {CATEGORIES.map((c) => (
                   <button
                     key={c}
                     onClick={() => setCategory(c)}
@@ -136,12 +133,26 @@ export default function MediaPage() {
   );
 }
 
-function MediaCard({ item }: { item: typeof MEDIA_ITEMS[number] }) {
+function MediaCard({ item }: { item: MediaItem }) {
   const isPress = item.type === "press";
-  const isClickable = !!item.url;
+  const href = item.internal ? `/media/${item.id}` : item.url;
+  const isExternal = !item.internal && !!item.url;
+  const isClickable = !!href;
 
   const inner = (
     <>
+      {item.cover && (
+        <div className="relative h-44 w-full overflow-hidden bg-ink/5 sm:h-48">
+          <Image
+            src={item.cover}
+            alt={item.title}
+            fill
+            unoptimized={item.cover.includes("supabase.co")}
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-contain"
+          />
+        </div>
+      )}
       <div className={`flex items-center justify-between px-6 pt-6 ${isPress ? "text-green-deep" : "text-gold-dark"}`}>
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider">
           {isPress ? <Newspaper className="h-3.5 w-3.5" /> : <PenLine className="h-3.5 w-3.5" />}
@@ -174,7 +185,7 @@ function MediaCard({ item }: { item: typeof MEDIA_ITEMS[number] }) {
           )}
           {isClickable && (
             <span className="ml-auto flex items-center gap-1.5 font-semibold text-gold-dark">
-              Read article <ExternalLink className="h-3 w-3" />
+              {isExternal ? "Read article" : "Read post"} {isExternal ? <ExternalLink className="h-3 w-3" /> : <ArrowRight className="h-3 w-3" />}
             </span>
           )}
         </div>
@@ -188,9 +199,9 @@ function MediaCard({ item }: { item: typeof MEDIA_ITEMS[number] }) {
   if (isClickable) {
     return (
       <a
-        href={item.url}
-        target="_blank"
-        rel="noopener noreferrer"
+        href={href}
+        target={isExternal ? "_blank" : undefined}
+        rel={isExternal ? "noopener noreferrer" : undefined}
         className={baseClass + " cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold focus:ring-offset-2"}
         aria-label={`Read: ${item.title}`}
       >

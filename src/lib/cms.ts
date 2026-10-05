@@ -53,6 +53,7 @@ export type MediaRow = {
   url: string | null;
   date_label: string | null;
   cover_path: string | null;
+  body: string | null;
   published: boolean;
   created_at: string;
 };
@@ -82,16 +83,32 @@ export function galleryRowToItem(row: GalleryRow): GalleryItem & { id: string } 
   };
 }
 
+export function formatMediaDate(raw: string | null | undefined, fallback?: string): string {
+  const value = (raw || "").trim();
+  const iso = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) {
+    const date = new Date(Date.UTC(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3])));
+    return date.toLocaleDateString("en-GB", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" });
+  }
+  if (value) return value;
+  if (fallback) {
+    return new Date(fallback).toLocaleDateString("en-GB", { month: "long", day: "numeric", year: "numeric" });
+  }
+  return "";
+}
+
 export function mediaRowToItem(row: MediaRow): MediaItem {
   return {
     id: row.id,
     type: row.kind,
     title: row.title,
     excerpt: row.excerpt,
-    date: row.date_label || new Date(row.created_at).toLocaleDateString("en-GB", { month: "long", day: "numeric", year: "numeric" }),
+    date: formatMediaDate(row.date_label, row.created_at),
     category: row.category,
     author: row.author || undefined,
     url: row.url || undefined,
+    cover: publicObjectUrl(row.cover_path) || undefined,
+    internal: true,
   };
 }
 
@@ -117,6 +134,16 @@ export async function listMedia(opts: { publishedOnly?: boolean } = {}): Promise
     return [];
   }
   return (data ?? []) as MediaRow[];
+}
+
+export async function getPublishedMedia(id: string): Promise<MediaRow | null> {
+  const db = supabaseAdmin();
+  const { data, error } = await db.from("media_posts").select("*").eq("id", id).eq("published", true).maybeSingle();
+  if (error) {
+    if (!missingTable(error)) console.error("media_posts", error);
+    return null;
+  }
+  return (data as MediaRow) ?? null;
 }
 
 export async function listManifestos(): Promise<ManifestoRow[]> {

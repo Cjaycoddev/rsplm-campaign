@@ -29,9 +29,12 @@ create table if not exists media_posts (
   url text,
   date_label text,
   cover_path text,
+  body text,
   published boolean not null default true,
   created_at timestamptz not null default now()
 );
+
+alter table media_posts add column if not exists body text;
 
 create index if not exists media_posts_pub_idx on media_posts (published, created_at desc);
 

@@ -8,6 +8,9 @@ export interface MediaItem {
   author?: string;
   readTime?: string;
   url?: string;
+  cover?: string;
+  /** Uploaded CMS post — open /media/[id] when there is no external link. */
+  internal?: boolean;
 }
 
 export const MEDIA_ITEMS: MediaItem[] = [
