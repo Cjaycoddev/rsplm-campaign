@@ -55,7 +55,7 @@ export async function POST(req: Request) {
       to: r.email,
       toName: r.display_name,
       subject,
-      html: `<p>Dear ${r.display_name},</p>${html}`,
+      html: `<p style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#0E6B2F;font-weight:700;">Dear ${r.display_name},</p><div style="color:#111418;font-size:16px;line-height:1.65;">${html}</div><p style="margin:18px 0 0;padding:14px 16px;background:#E8F3EC;border-left:4px solid #C9A227;color:#0B5D2A;font-weight:700;">People First.</p>`,
     });
     if (res.ok && !res.skipped) sent += 1;
   }
