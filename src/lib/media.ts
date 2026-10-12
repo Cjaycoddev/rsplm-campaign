@@ -9,7 +9,7 @@ export interface MediaItem {
   readTime?: string;
   url?: string;
   cover?: string;
-  /** Uploaded CMS post — open /media/[id] when there is no external link. */
+  /** Uploaded CMS post â€” open /media/[id] when there is no external link. */
   internal?: boolean;
 }
 
@@ -39,7 +39,7 @@ export const MEDIA_ITEMS: MediaItem[] = [
     excerpt: "Endorsed the African Union's C5 Committee resolutions demanding immediate ceasefire, release of political detainees, and no further election delays.",
     date: "February 17, 2026",
     category: "Diplomacy",
-    url: "https://ethioinsight.org/au-sets-firm-deadlines-for-south-sudan-transition-r-splm-f-candidate-nathaniel-garang-Aduot-endorses-resolutions/",
+    url: "https://ethioinsight.org/au-sets-firm-deadlines-for-south-sudan-transition-r-splm-f-candidate-nathaniel-garang-aduotdit-endorses-resolutions/",
   },
   {
     id: "p4",

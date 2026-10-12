@@ -90,7 +90,7 @@ export const PRESS: PressArticle[] = [
     source: "EthioInsight",
     date: "February 17, 2026",
     title: "AU Sets Firm Deadlines for South Sudan Transition; R-SPLM/F Candidate Nathaniel Garang Endorses Resolutions",
-    url: "https://ethioinsight.org/au-sets-firm-deadlines-for-south-sudan-transition-r-splm-f-candidate-nathaniel-garang-Aduot-endorses-resolutions/",
+    url: "https://ethioinsight.org/au-sets-firm-deadlines-for-south-sudan-transition-r-splm-f-candidate-nathaniel-garang-aduotdit-endorses-resolutions/",
   },
   {
     source: "EthioInsight",
