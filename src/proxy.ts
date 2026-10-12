@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { ADMIN_COOKIE, verifyAdminCookie } from "@/lib/admin-cookie";
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isAdminPage = path.startsWith("/admin") && path !== "/admin/login";
   const isAdminApi =

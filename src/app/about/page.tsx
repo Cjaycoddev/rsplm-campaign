@@ -10,8 +10,18 @@ import { QUICK_FACTS, STORY_PARAGRAPHS, AWARD, PRESS } from "@/lib/biography";
 
 export const metadata = {
   title: "Biography  Hon. Nathaniel Garang Aduot",
-  description: "Chairman of R-SPLM/F, ordained Anglican priest, and 2026 presidential candidate for South Sudan.",
+  description:
+    "The full biography of Hon. Nathaniel Garang Aduot  Chairman of R-SPLM/F, ordained Anglican priest, International Peace Award Laureate 2025, and candidate for President of South Sudan 2026.",
+  alternates: { canonical: "/about" },
+  openGraph: {
+    title: "Biography  Hon. Nathaniel Garang Aduot",
+    description: "From Payom, Kongor Area to the international stage  the journey of a reform-driven leader.",
+    url: "https://nathanielgarang.com/about",
+    images: ["/images/nathaniel-portrait.jpg"],
+  },
 };
+
+
 
 export default function AboutPage() {
   return (

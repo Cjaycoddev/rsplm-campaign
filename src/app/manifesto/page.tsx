@@ -1,6 +1,18 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PillarCard from "@/components/manifesto/PillarCard";
+
+export const metadata = {
+  title: "Manifesto  Nine Pillars of Change",
+  description:
+    "The Nine Pillars of Change  Hon. Nathaniel Garang Aduot's binding commitment to unite, reform, and rebuild South Sudan. From free healthcare to 30 million hectares of agriculture.",
+  alternates: { canonical: "/manifesto" },
+  openGraph: {
+    title: "Manifesto  Nine Pillars of Change",
+    description: "A bold, actionable plan to transform South Sudan  rooted in reform, unity, and the aspirations of its people.",
+    url: "https://nathanielgarang.com/manifesto",
+  },
+};
 import { PILLARS, type Pillar } from "@/lib/manifesto";
 import { liveManifesto, publicObjectUrl } from "@/lib/cms";
 import { isSupabaseConfigured } from "@/lib/supabase/admin";

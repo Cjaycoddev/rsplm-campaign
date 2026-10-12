@@ -1,4 +1,10 @@
 import Navbar from "@/components/layout/Navbar";
+export const metadata = {
+  title: "Join the Movement  Register as a Supporter",
+  description:
+    "Register as a Supporter, Volunteer, Campaign Agent, or Donor for the R-SPLM/F People First movement. Every supporter counts in the 2026 South Sudan general elections.",
+  alternates: { canonical: "/join" },
+};
 import Footer from "@/components/layout/Footer";
 import JoinForm from "@/components/join/JoinForm";
 import { Users } from "lucide-react";

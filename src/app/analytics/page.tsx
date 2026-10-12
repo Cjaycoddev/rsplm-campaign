@@ -1,5 +1,11 @@
 import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
+export const metadata = {
+  title: "Analytics  The Movement is Growing",
+  description:
+    "Campaign-reported figures on the R-SPLM/F People First movement  supporters, voters, agents, and states covered across South Sudan.",
+  alternates: { canonical: "/analytics" },
+};
 import Footer from "@/components/layout/Footer";
 import { Users, Vote, MapPin, UserCheck, TrendingUp, Info } from "lucide-react";
 import { STATE_DATA, TOTALS, DATA_SOURCE_NOTE } from "@/lib/analytics";
