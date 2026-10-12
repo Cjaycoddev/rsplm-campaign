@@ -10,8 +10,8 @@ export default function Footer() {
             <div className="flex items-center gap-3">
               <Image src="/logo.png" alt="R-SPLM/F" width={56} height={56} className="rounded-full bg-white p-1" />
               <div>
-                <div className="font-display text-xl font-bold">R-SPLM/F</div>
-                <div className="text-xs uppercase tracking-[0.2em] text-gold">The Real SPLM  People First</div>
+                <div className="font-display text-xl font-bold">Real People's Liberation Movement Forward</div>
+                <div className="text-xs uppercase tracking-[0.2em] text-gold">People First</div>
               </div>
             </div>
             <p className="mt-6 max-w-md text-sm text-white/70">

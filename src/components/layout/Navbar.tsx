@@ -66,11 +66,15 @@ export default function Navbar() {
 
       <header className={`fixed top-1 z-[9998] w-full transition-all duration-300 ${scrolled || open ? "bg-green-forest/95 shadow-lg backdrop-blur-md" : "bg-transparent"}`}>
         <nav className="container-x flex h-20 items-center justify-between">
-          <Link href="/" className="relative z-50 flex items-center gap-3">
-            <Image src="/logo.png" alt="R-SPLM/F" width={48} height={48} className="rounded-full bg-white p-0.5" />
+          <Link href="/" className="relative z-50 flex min-w-0 flex-shrink-0 items-center gap-2 sm:gap-3">
+            <Image src="/logo.png" alt="R-SPLM/F" width={44} height={44} className="h-11 w-11 flex-shrink-0 rounded-full bg-white p-0.5 sm:h-12 sm:w-12" />
             <div className="hidden flex-col sm:flex">
-              <span className="font-display text-lg font-bold leading-none text-white">R-SPLM/F</span>
-              <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-gold">People First</span>
+              <span className="max-w-[170px] font-display text-[11px] font-bold leading-[1.15] text-white lg:max-w-[200px] lg:text-xs xl:max-w-[240px] xl:text-[13px]">
+                Real People&apos;s Liberation Movement Forward
+              </span>
+              <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.22em] text-gold sm:text-[10px]">
+                People First
+              </span>
             </div>
           </Link>
 
@@ -171,7 +175,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-2">
                   <Image src="/logo.png" alt="R-SPLM/F" width={36} height={36} className="rounded-full bg-white p-0.5" />
                   <div className="flex flex-col">
-                    <span className="font-display text-sm font-bold leading-none text-white">R-SPLM/F</span>
+                    <span className="font-display text-sm font-bold leading-none text-white">Real People's Liberation Movement Forward </span>
                     <span className="text-[9px] font-medium uppercase tracking-[0.2em] text-gold">People First</span>
                   </div>
                 </div>
@@ -242,7 +246,7 @@ export default function Navbar() {
                       Next President  South Sudan 2026
                     </div>
                     <div className="mt-1 font-display text-sm font-bold text-white">
-                      Hon. Nathaniel Garang&apos; Aduot
+                      Hon. Nathaniel Garang Aduot
                     </div>
                   </div>
                 </motion.div>
