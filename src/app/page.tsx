@@ -28,7 +28,7 @@ export default function Home() {
       <Navbar />
 
       {/* HERO */}
-      <section className="relative min-h-screen overflow-hidden bg-hero-gradient pt-24">
+      <section className="relative min-h-screen overflow-hidden bg-hero-gradient pt-32">
         <div className="absolute inset-0 opacity-10">
           <Image src="/images/rally-juba.jpg" alt="" fill className="object-cover" priority />
         </div>

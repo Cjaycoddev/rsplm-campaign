@@ -66,13 +66,13 @@ export default function Navbar() {
 
       <header className={`fixed top-1 z-[9998] w-full transition-all duration-300 ${scrolled || open ? "bg-green-forest/95 shadow-lg backdrop-blur-md" : "bg-transparent"}`}>
         <nav className="container-x flex h-20 items-center justify-between">
-          <Link href="/" className="relative z-50 flex min-w-0 flex-shrink-0 items-center gap-2 sm:gap-3">
-            <Image src="/logo-v2.png" alt="R-SPLM/F" width={44} height={44} className="h-11 w-11 flex-shrink-0 rounded-full bg-white p-0.5 sm:h-12 sm:w-12" />
-            <div className="hidden flex-col sm:flex">
-              <span className="max-w-[170px] font-display text-[11px] font-bold leading-[1.15] text-white lg:max-w-[200px] lg:text-xs xl:max-w-[240px] xl:text-[13px]">
+          <Link href="/" className="relative z-50 flex min-w-0 flex-shrink-0 items-center gap-1.5 sm:gap-2.5 lg:gap-3">
+            <Image src="/logo-v2.png" alt="R-SPLM/F" width={44} height={44} className="h-9 w-9 flex-shrink-0 rounded-full bg-white p-0.5 sm:h-11 sm:w-11 lg:h-12 lg:w-12" />
+            <div className="flex min-w-0 flex-col">
+              <span className="max-w-[180px] font-display text-[11px] font-bold leading-[1.15] text-white sm:max-w-[220px] sm:text-xs md:max-w-[260px] md:text-[13px] lg:max-w-[280px] lg:text-[13px] xl:max-w-[200px] xl:text-[11.5px]">
                 Real People&apos;s Liberation Movement Forward
               </span>
-              <span className="mt-1 text-[9px] font-semibold uppercase tracking-[0.22em] text-gold sm:text-[10px]">
+              <span className="mt-0.5 text-[8px] font-semibold uppercase tracking-[0.16em] text-gold sm:mt-0.5 sm:text-[9px] md:text-[9.5px] xl:text-[9px]">
                 People First
               </span>
             </div>
@@ -144,6 +144,7 @@ export default function Navbar() {
             </button>
           </div>
         </nav>
+
       </header>
 
       <AnimatePresence>
