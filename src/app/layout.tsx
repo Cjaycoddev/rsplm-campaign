@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Hon. Nathaniel Garang Aduot  Next President, South Sudan 2026",
   description:
     "R-SPLM/F  People First. Chairman, ordained Anglican priest, International Peace Award Laureate 2025. Serving with Honor. Leading with Heart.",
-  icons: { icon: "/logo.png" },
+  icons: { icon: "/logo-v2.png" },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
