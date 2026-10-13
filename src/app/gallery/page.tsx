@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, ChevronLeft, ChevronRight, MapPin, Maximize2, Filter, Orbit } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Footer from "@/components/layout/Footer";
 import OrbitCarousel from "@/components/gallery/OrbitCarousel";
 import { GALLERY_ITEMS, ORBIT_ITEMS, CATEGORIES, type GalleryCategory, type GalleryItem } from "@/lib/gallery";

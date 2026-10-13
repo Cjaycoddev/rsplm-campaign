@@ -4,29 +4,54 @@ import { Quote, ArrowRight, Award, Calendar, MapPin, Newspaper, User, Heart, Hea
 
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Timeline from "@/components/about/Timeline";
 import InternationalRecognition from "@/components/about/InternationalRecognition";
 import { QUICK_FACTS, STORY_PARAGRAPHS, AWARD, PRESS } from "@/lib/biography";
+import { generateMetadata, faqSchema } from "@/lib/seo";
 
-export const metadata = {
-  title: "Biography  Hon. Nathaniel Garang Aduotdit",
-  description:
-    "The full biography of Hon. Nathaniel Garang Aduotdit  Chairman of R-SPLM/F, ordained Anglican priest, International Peace Award Laureate 2025, and candidate for President of South Sudan 2026.",
-  alternates: { canonical: "/about" },
-  openGraph: {
-    title: "Biography  Hon. Nathaniel Garang Aduotdit",
-    description: "From Payom, Kongor Area to the international stage  the journey of a reform-driven leader.",
-    url: "https://nathanielgarang.com/about",
-    images: ["/images/nathaniel-portrait.jpg"],
+export const metadata = generateMetadata({
+  title: "Biography",
+  description: "The full biography of Hon. Nathaniel Garang Aduotdit  Chairman of R-SPLM/F, ordained Anglican priest, International Peace Award Laureate 2025, and candidate for President of South Sudan 2026.",
+  path: "/about",
+  images: [
+    {
+      url: "/images/nathaniel-portrait.jpg",
+      alt: "Hon. Nathaniel Garang Aduotdit - Chairman of R-SPLM/F",
+      width: 1200,
+      height: 630,
+    },
+  ],
+});
+
+const aboutFAQs = [
+  {
+    question: "Where was Nathaniel Garang Aduotdit born?",
+    answer: "Hon. Nathaniel Garang Aduotdit was born in Payom, Kongor Area, South Sudan.",
   },
-};
-
-
+  {
+    question: "What is his professional background?",
+    answer: "He is an ordained Anglican priest, Chairman of R-SPLM/F, Chairman of the East Africa Religious Council, and a presidential candidate for the 2026 South Sudan general elections.",
+  },
+  {
+    question: "What awards has he received?",
+    answer: "He was conferred the International Peace Award 2025 for Inter-Faith Leadership by the International College of Peace Studies (ICOPS), a global institution partnered with the UN-mandated University for Peace.",
+  },
+  {
+    question: "What is the R-SPLM/F?",
+    answer: "The Real People's Liberation Movement Forward (R-SPLM/F) is a political movement founded on the principles of unity, reform, and people-first governance for South Sudan.",
+  },
+  {
+    question: "What is the People First agenda?",
+    answer: "The People First agenda is a binding commitment to unite the nation, end corruption, create jobs for youth, reform governance, and ensure free healthcare and education for all South Sudanese citizens.",
+  },
+];
 
 export default function AboutPage() {
   return (
     <>
       <Navbar />
+      <Breadcrumbs />
 
       <section className="relative overflow-hidden bg-hero-gradient pt-32 pb-20 text-white">
         <div className="absolute inset-0 opacity-10">
@@ -180,6 +205,31 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <section className="container-x py-16" aria-labelledby="about-faq-heading">
+        <div className="mx-auto max-w-3xl">
+          <h2 id="about-faq-heading" className="font-display text-2xl font-bold text-green-deep text-center sm:text-3xl">
+            Frequently Asked Questions
+          </h2>
+          <div className="mt-8 space-y-4">
+            {aboutFAQs.map((faq, i) => (
+              <details key={i} className="group rounded-2xl border border-green-deep/10 bg-white p-6 shadow-card transition-all hover:shadow-card-hover">
+                <summary className="flex cursor-pointer items-center justify-between font-semibold text-green-deep list-none">
+                  {faq.question}
+                  <span className="ml-4 text-gold transition-transform group-open:rotate-180">▼</span>
+                </summary>
+                <div className="mt-4 text-ink/70 leading-relaxed">{faq.answer}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(aboutFAQs)) }}
+      />
 
       <Footer />
     </>

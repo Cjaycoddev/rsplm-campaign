@@ -1,11 +1,21 @@
 import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
-export const metadata = {
-  title: "Analytics  The Movement is Growing",
-  description:
-    "Campaign-reported figures on the R-SPLM/F People First movement  supporters, voters, agents, and states covered across South Sudan.",
-  alternates: { canonical: "/analytics" },
-};
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
+import { generateMetadata } from "@/lib/seo";
+
+export const metadata = generateMetadata({
+  title: "Analytics",
+  description: "Campaign-reported figures on the R-SPLM/F People First movement  supporters, voters, agents, and states covered across South Sudan.",
+  path: "/analytics",
+  images: [
+    {
+      url: "/images/nathaniel-portrait.jpg",
+      alt: "R-SPLM/F Campaign Analytics - Nathaniel Garang Aduotdit",
+      width: 1200,
+      height: 630,
+    },
+  ],
+});
 import Footer from "@/components/layout/Footer";
 import { Users, Vote, MapPin, UserCheck, TrendingUp, Info } from "lucide-react";
 import { STATE_DATA, TOTALS, DATA_SOURCE_NOTE } from "@/lib/analytics";
@@ -39,6 +49,7 @@ export default function AnalyticsPage() {
   return (
     <>
       <Navbar />
+      <Breadcrumbs />
 
       <main className="min-h-screen bg-ivory">
         <section className="bg-hero-gradient pt-32 pb-16 text-white">

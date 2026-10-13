@@ -2,6 +2,15 @@ import { isDarajaConfigured } from "@/lib/daraja";
 import { isSupabaseConfigured, supabaseAdmin } from "@/lib/supabase/admin";
 import AdminDashboard, { type AdminDonation, type AdminSupporter } from "@/components/admin/AdminDashboard";
 import { listGallery, listMedia, listManifestos } from "@/lib/cms";
+import { generateMetadata } from "@/lib/seo";
+
+export const metadata = generateMetadata({
+  title: "Admin Dashboard",
+  description: "Campaign admin dashboard for managing supporters, donations, gallery, media, and manifestos.",
+  path: "/admin",
+  noIndex: true,
+  noFollow: true,
+});
 
 export const dynamic = "force-dynamic";
 

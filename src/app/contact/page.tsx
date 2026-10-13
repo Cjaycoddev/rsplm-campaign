@@ -1,12 +1,23 @@
 import Navbar from "@/components/layout/Navbar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Footer from "@/components/layout/Footer";
 import { Mail, MapPin, Phone, MessageSquare, Globe, Users } from "lucide-react";
 import Link from "next/link";
+import { generateMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Contact  R-SPLM/F Campaign",
-  description: "Reach the People First campaign. Offices, diaspora hubs, and direct lines.",
-};
+export const metadata = generateMetadata({
+  title: "Contact",
+  description: "Reach the People First campaign. Offices in Juba, Nairobi, Kampala, London, Washington, Melbourne. Contact departments for membership, diaspora, press, and finance.",
+  path: "/contact",
+  images: [
+    {
+      url: "/images/nathaniel-portrait.jpg",
+      alt: "Contact R-SPLM/F Campaign - Nathaniel Garang Aduotdit",
+      width: 1200,
+      height: 630,
+    },
+  ],
+});
 
 const OFFICES = [
   { city: "Juba", country: "South Sudan", role: "Headquarters", phone: "+211 9XX XXX XXX", email: "juba@rsplm-peoplefirst.org" },

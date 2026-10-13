@@ -5,8 +5,30 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { getPublishedMedia, mediaRowToItem, publicObjectUrl } from "@/lib/cms";
 import { isSupabaseConfigured } from "@/lib/supabase/admin";
+import { generateMetadata as generateMetadataUtil, absoluteUrl } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!isSupabaseConfigured()) return { title: "Article Not Found" };
+  const row = await getPublishedMedia(id);
+  if (!row) return { title: "Article Not Found" };
+
+  const item = mediaRowToItem(row);
+  const cover = publicObjectUrl(row.cover_path);
+  const isPress = row.kind === "press";
+
+  return generateMetadataUtil({
+    title: row.title,
+    description: row.excerpt || `Read ${isPress ? "press coverage" : "blog post"} about the R-SPLM/F People First campaign.`,
+    path: `/media/${id}`,
+    images: cover ? [
+      { url: cover, alt: row.title, width: 1200, height: 630 }
+    ] : undefined,
+    type: "article",
+  });
+}
 
 export default async function MediaArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

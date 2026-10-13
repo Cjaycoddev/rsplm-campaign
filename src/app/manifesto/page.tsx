@@ -1,18 +1,22 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import PillarCard from "@/components/manifesto/PillarCard";
+import { generateMetadata } from "@/lib/seo";
 
-export const metadata = {
+export const metadata = generateMetadata({
   title: "Manifesto  Nine Pillars of Change",
-  description:
-    "The Nine Pillars of Change  Hon. Nathaniel Garang Aduotdit's binding commitment to unite, reform, and rebuild South Sudan. From free healthcare to 30 million hectares of agriculture.",
-  alternates: { canonical: "/manifesto" },
-  openGraph: {
-    title: "Manifesto  Nine Pillars of Change",
-    description: "A bold, actionable plan to transform South Sudan  rooted in reform, unity, and the aspirations of its people.",
-    url: "https://nathanielgarang.com/manifesto",
-  },
-};
+  description: "The Nine Pillars of Change  Hon. Nathaniel Garang Aduotdit's binding commitment to unite, reform, and rebuild South Sudan. From free healthcare to 30 million hectares of agriculture.",
+  path: "/manifesto",
+  images: [
+    {
+      url: "/images/nathaniel-portrait.jpg",
+      alt: "R-SPLM/F Manifesto - Nine Pillars of Change for South Sudan 2026",
+      width: 1200,
+      height: 630,
+    },
+  ],
+});
 import { PILLARS, type Pillar } from "@/lib/manifesto";
 import { liveManifesto, publicObjectUrl } from "@/lib/cms";
 import { isSupabaseConfigured } from "@/lib/supabase/admin";
@@ -42,6 +46,7 @@ export default async function ManifestoPage() {
   return (
     <>
       <Navbar />
+      <Breadcrumbs />
 
       <section className="relative overflow-hidden bg-hero-gradient pb-20 pt-32 text-white">
         <div className="container-x max-w-4xl text-center">

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Newspaper, PenLine, ArrowRight, Calendar, Clock, User, Filter , ExternalLink } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
+import Breadcrumbs from "@/components/layout/Breadcrumbs";
 import Footer from "@/components/layout/Footer";
 import { MEDIA_ITEMS, CATEGORIES, type MediaItem } from "@/lib/media";
 
@@ -35,6 +36,7 @@ export default function MediaPage() {
   return (
     <>
       <Navbar />
+      <Breadcrumbs />
 
       <main className="min-h-screen bg-ivory">
         {/* HERO */}
