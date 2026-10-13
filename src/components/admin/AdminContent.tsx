@@ -222,7 +222,7 @@ function MediaAdmin({ items, kind }: { items: MediaRow[]; kind: "press" | "blog"
           </select>
         </label>
         {isBlog ? (
-          <Field name="author" label="Author (optional)" placeholder="Hon. Nathaniel Garang Aduot" />
+          <Field name="author" label="Author (optional)" placeholder="Hon. Nathaniel Garang Aduotdit" />
         ) : (
           <Field name="url" label="Article link (optional)" placeholder="https://" />
         )}

@@ -159,7 +159,7 @@ export default function JoinForm() {
             value={name}
             onChange={setName}
             onBlur={() => blur("name")}
-            placeholder="Nathaniel Garang Aduot"
+            placeholder="Nathaniel Garang Aduotdit"
             error={touched.name ? errors.name : undefined}
           />
 

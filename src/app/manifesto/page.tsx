@@ -5,7 +5,7 @@ import PillarCard from "@/components/manifesto/PillarCard";
 export const metadata = {
   title: "Manifesto  Nine Pillars of Change",
   description:
-    "The Nine Pillars of Change  Hon. Nathaniel Garang Aduot's binding commitment to unite, reform, and rebuild South Sudan. From free healthcare to 30 million hectares of agriculture.",
+    "The Nine Pillars of Change  Hon. Nathaniel Garang Aduotdit's binding commitment to unite, reform, and rebuild South Sudan. From free healthcare to 30 million hectares of agriculture.",
   alternates: { canonical: "/manifesto" },
   openGraph: {
     title: "Manifesto  Nine Pillars of Change",
@@ -75,7 +75,7 @@ export default async function ManifestoPage() {
             &ldquo;{pledge}&rdquo;
           </blockquote>
           <div className="mt-6 text-sm font-semibold uppercase tracking-wider text-gold">
-            Hon. Nathaniel Garang&apos; Aduot
+            Hon. Nathaniel Garang&apos; Aduotdit
           </div>
         </div>
       </section>

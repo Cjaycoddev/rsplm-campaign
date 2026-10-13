@@ -40,7 +40,7 @@ export default function Home() {
             </div>
             <h1 className="font-display text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
               Hon. Nathaniel<br />
-              <span className="text-gold">Garang&apos; Aduot</span>
+              <span className="text-gold">Garang&apos; Aduotdit</span>
             </h1>
             <p className="mt-6 text-xl font-medium text-white/90 sm:text-2xl">
               Serving with Honor. Leading with Heart.
@@ -62,7 +62,7 @@ export default function Home() {
             <div className="relative mx-auto aspect-[3/4] w-full max-w-md">
               <div className="absolute -inset-4 rounded-3xl bg-gold/20 blur-3xl" />
               <div className="relative h-full overflow-hidden rounded-3xl border-2 border-gold/40 shadow-2xl">
-                <Image src="/images/nathaniel-portrait.png" alt="Hon. Nathaniel Garang Aduot" fill className="object-cover" priority />
+                <Image src="/images/nathaniel-portrait.png" alt="Hon. Nathaniel Garang Aduotdit" fill className="object-cover" priority />
               </div>
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gold px-6 py-2 text-xs font-bold uppercase tracking-wider text-ink shadow-gold">
                 For President  South Sudan 2026
@@ -138,7 +138,7 @@ export default function Home() {
               A New Generation of Leadership
             </h2>
             <p className="mt-6 text-ink/80">
-              Hon. Nathaniel Garang&apos; Aduot represents the next generation of South Sudanese leadership. From a nation shaped by conflict and fragile governance, he stands for change and reform  rebuilding national unity, strengthening democratic institutions, and giving young people a real stake in South Sudan&apos;s future.
+              Hon. Nathaniel Garang&apos; Aduotdit represents the next generation of South Sudanese leadership. From a nation shaped by conflict and fragile governance, he stands for change and reform  rebuilding national unity, strengthening democratic institutions, and giving young people a real stake in South Sudan&apos;s future.
             </p>
             <p className="mt-4 text-ink/70">
               His visibility has grown through diaspora engagement, political advocacy, and a policy-oriented approach to governance  transitioning South Sudan from instability to structured, people-centered leadership.
@@ -195,7 +195,7 @@ export default function Home() {
             &ldquo;This manifesto is a covenant with the people of South Sudan. Every promise here will be measured, tracked, and publicly reported.&rdquo;
           </blockquote>
           <div className="mt-6 text-sm font-semibold uppercase tracking-wider text-gold">
-             Hon. Nathaniel Garang&apos; Aduot
+             Hon. Nathaniel Garang&apos; Aduotdit
           </div>
         </div>
       </section>

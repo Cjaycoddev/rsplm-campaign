@@ -15,8 +15,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: "Hon. Nathaniel Garang Aduot | Next President  South Sudan 2026",
-    template: "%s | Hon. Nathaniel Garang Aduot",
+    default: "Hon. Nathaniel Garang Aduotdit | Next President  South Sudan 2026",
+    template: "%s | Hon. Nathaniel Garang Aduotdit",
   },
   description: SITE.description,
   keywords: [...SITE.keywords],
@@ -35,20 +35,20 @@ export const metadata: Metadata = {
     locale: SITE.locale,
     url: SITE.url,
     siteName: `${SITE.name}  People First`,
-    title: "Hon. Nathaniel Garang Aduot | Next President  South Sudan 2026",
+    title: "Hon. Nathaniel Garang Aduotdit | Next President  South Sudan 2026",
     description: SITE.tagline + " Join the movement to unite, reform, and rebuild South Sudan.",
     images: [
       {
         url: "/images/nathaniel-portrait.jpg",
         width: 1200,
         height: 630,
-        alt: "Hon. Nathaniel Garang Aduot  R-SPLM/F Candidate for President, South Sudan 2026",
+        alt: "Hon. Nathaniel Garang Aduotdit  R-SPLM/F Candidate for President, South Sudan 2026",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hon. Nathaniel Garang Aduot | Next President  South Sudan 2026",
+    title: "Hon. Nathaniel Garang Aduotdit | Next President  South Sudan 2026",
     description: SITE.tagline + " Join the movement for a united South Sudan.",
     images: ["/images/nathaniel-portrait.jpg"],
     ...(SITE.twitterHandle ? { site: SITE.twitterHandle, creator: SITE.twitterHandle } : {}),

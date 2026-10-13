@@ -1,12 +1,12 @@
 export const SITE = {
   url: "https://nathanielgarang.com",
-  name: "Hon. Nathaniel Garang Aduot",
+  name: "Hon. Nathaniel Garang Aduotdit",
   shortName: "Nathaniel Garang",
   alternateNames: [
     "Nathaniel Garang",
     "Hon. Nathaniel Garang",
-    "Nathaniel Garang Aduot",
-    "Hon. Nathaniel Garang Aduot",
+    "Nathaniel Garang Aduotdit",
+    "Hon. Nathaniel Garang Aduotdit",
   ],
   jobTitle: "Presidential Candidate, Republic of South Sudan",
   party: "Real People's Liberation Movement Forward (R-SPLM/F)",
@@ -14,10 +14,10 @@ export const SITE = {
   election: "2026 South Sudan General Elections",
   tagline: "Serving with Honor. Leading with Heart.",
   description:
-    "Official campaign website for Hon. Nathaniel Garang Aduot  R-SPLM/F candidate for President of South Sudan in the 2026 general elections. Chairman, ordained Anglican priest, International Peace Award Laureate 2025. Serving with Honor. Leading with Heart.",
+    "Official campaign website for Hon. Nathaniel Garang Aduotdit  R-SPLM/F candidate for President of South Sudan in the 2026 general elections. Chairman, ordained Anglican priest, International Peace Award Laureate 2025. Serving with Honor. Leading with Heart.",
   keywords: [
     "Nathaniel Garang",
-    "Nathaniel Garang Aduot",
+    "Nathaniel Garang Aduotdit",
     "Hon. Nathaniel Garang",
     "Nathaniel Garang South Sudan",
     "R-SPLM/F",

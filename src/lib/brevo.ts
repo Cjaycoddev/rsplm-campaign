@@ -25,7 +25,7 @@ function wrapHtml(inner: string): string {
           <tr>
             <td style="background:#0B5D2A;padding:28px 32px 24px;text-align:center;">
               <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.28em;font-weight:700;color:#C9A227;text-transform:uppercase;">R-SPLM/F · People First</p>
-              <h1 style="margin:0;font-size:26px;line-height:1.25;color:#FFFFFF;font-weight:700;">Hon. Nathaniel Garang&apos; Aduot</h1>
+              <h1 style="margin:0;font-size:26px;line-height:1.25;color:#FFFFFF;font-weight:700;">Hon. Nathaniel Garang&apos; Aduotdit</h1>
               <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#E8C968;">Serving with Honor. Leading with Heart.</p>
             </td>
           </tr>
@@ -45,7 +45,7 @@ function wrapHtml(inner: string): string {
           </tr>
           <tr>
             <td style="padding:16px 8px 0;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.5;color:#8FB89A;">
-              This message was sent by the official campaign of Hon. Nathaniel Garang&apos; Aduot.
+              This message was sent by the official campaign of Hon. Nathaniel Garang&apos; Aduotdit.
             </td>
           </tr>
         </table>
@@ -107,7 +107,7 @@ export function welcomeHtml(name: string): string {
   return `
     <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.2em;font-weight:700;color:#C9A227;text-transform:uppercase;">Welcome</p>
     <p style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#0E6B2F;font-weight:700;">Dear ${escapeHtml(name)},</p>
-    <p style="margin:0 0 14px;">Thank you for standing with Hon. Nathaniel Garang&apos; Aduot and the People First movement.</p>
+    <p style="margin:0 0 14px;">Thank you for standing with Hon. Nathaniel Garang&apos; Aduotdit and the People First movement.</p>
     <p style="margin:0 0 14px;">We have recorded your registration. Our local coordination team will be in touch with updates.</p>
     <p style="margin:18px 0 0;padding:14px 16px;background:#E8F3EC;border-left:4px solid #C9A227;color:#0B5D2A;font-weight:700;">People First.</p>
   `;

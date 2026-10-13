@@ -205,7 +205,7 @@ function MpesaForm({
         onChange={setName}
         onBlur={() => blur("name")}
         error={touched.name ? errors.name : undefined}
-        placeholder="Nathaniel Garang Aduot"
+        placeholder="Nathaniel Garang Aduotdit"
       />
       <Field
         label="M-Pesa Phone (10 digits, starts 01 or 07)"

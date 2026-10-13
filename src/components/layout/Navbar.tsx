@@ -247,7 +247,7 @@ export default function Navbar() {
                       Next President  South Sudan 2026
                     </div>
                     <div className="mt-1 font-display text-sm font-bold text-white">
-                      Hon. Nathaniel Garang Aduot
+                      Hon. Nathaniel Garang Aduotdit
                     </div>
                   </div>
                 </motion.div>

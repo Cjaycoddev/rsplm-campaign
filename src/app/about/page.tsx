@@ -9,12 +9,12 @@ import InternationalRecognition from "@/components/about/InternationalRecognitio
 import { QUICK_FACTS, STORY_PARAGRAPHS, AWARD, PRESS } from "@/lib/biography";
 
 export const metadata = {
-  title: "Biography  Hon. Nathaniel Garang Aduot",
+  title: "Biography  Hon. Nathaniel Garang Aduotdit",
   description:
-    "The full biography of Hon. Nathaniel Garang Aduot  Chairman of R-SPLM/F, ordained Anglican priest, International Peace Award Laureate 2025, and candidate for President of South Sudan 2026.",
+    "The full biography of Hon. Nathaniel Garang Aduotdit  Chairman of R-SPLM/F, ordained Anglican priest, International Peace Award Laureate 2025, and candidate for President of South Sudan 2026.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "Biography  Hon. Nathaniel Garang Aduot",
+    title: "Biography  Hon. Nathaniel Garang Aduotdit",
     description: "From Payom, Kongor Area to the international stage  the journey of a reform-driven leader.",
     url: "https://nathanielgarang.com/about",
     images: ["/images/nathaniel-portrait.jpg"],
@@ -39,7 +39,7 @@ export default function AboutPage() {
             </div>
             <h1 className="font-display text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-6xl">
               Hon. Nathaniel<br />
-              <span className="text-gold">Garang&apos; Aduot</span>
+              <span className="text-gold">Garang&apos; Aduotdit</span>
             </h1>
             <p className="mt-6 text-lg font-medium text-white/90">
               Chairman, R-SPLM/F  Chairman, East Africa Religious Council
@@ -59,7 +59,7 @@ export default function AboutPage() {
             <div className="relative mx-auto aspect-[3/4] w-full max-w-sm">
               <div className="absolute -inset-4 rounded-3xl bg-gold/20 blur-3xl" />
               <div className="relative h-full overflow-hidden rounded-3xl border-2 border-gold/40 shadow-2xl">
-                <Image src="/images/nathaniel-portrait.png" alt="Hon. Nathaniel Garang Aduot" fill className="object-cover" priority />
+                <Image src="/images/nathaniel-portrait.png" alt="Hon. Nathaniel Garang Aduotdit" fill className="object-cover" priority />
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function AboutPage() {
               <blockquote className="mt-3 font-display text-lg font-bold italic text-green-deep sm:text-xl">
                 &ldquo;I believe South Sudan&apos;s future is built by putting people first  protecting peace, restoring trust, and creating opportunities that reach every community.&rdquo;
               </blockquote>
-              <div className="mt-3 text-xs font-semibold uppercase tracking-wider text-gold-dark"> Hon. Nathaniel Garang Aduot</div>
+              <div className="mt-3 text-xs font-semibold uppercase tracking-wider text-gold-dark"> Hon. Nathaniel Garang Aduotdit</div>
             </div>
           </div>
         </div>

@@ -168,7 +168,7 @@ export default function AdminDashboard({
           <div className="flex items-center gap-3">
             <Hamburger open={menuOpen} onClick={() => setMenuOpen((v) => !v)} />
             <div>
-              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold">Hon. Nathaniel Garang&apos; Aduot</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold">Hon. Nathaniel Garang&apos; Aduotdit</div>
               <h1 className="font-display text-2xl font-bold sm:text-3xl">Campaign command</h1>
               <p className="text-xs text-white/70 sm:text-sm">{active.label} · {active.hint}</p>
             </div>
