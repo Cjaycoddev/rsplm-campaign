@@ -4,7 +4,9 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Heart } from "lucide-react";
+import { Menu, X, Heart, ShieldAlert } from "lucide-react";
+
+const PAYMENT_COOKIE = "rsplm_payment";
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,6 +17,11 @@ const links = [
   { href: "/gallery", label: "Gallery" },
   { href: "/join", label: "Join Us" },
 ];
+
+function hasPaymentCookie(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split(";").some((c) => c.trim().startsWith(`${PAYMENT_COOKIE}=`));
+}
 
 const drawerTransition = { type: "spring" as const, damping: 30, stiffness: 240, mass: 0.9 };
 
@@ -36,7 +43,12 @@ const itemVariants = {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [paymentRequired, setPaymentRequired] = useState(true);
   const pathname = usePathname();
+
+  useEffect(() => {
+    setPaymentRequired(!hasPaymentCookie());
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -79,34 +91,40 @@ export default function Navbar() {
           </Link>
 
           <div className="hidden items-center gap-8 lg:flex">
-            {links.map((l) => {
-              const active = pathname === l.href;
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`group relative text-sm font-medium transition-colors ${
-                    active ? "text-gold" : "text-white/90 hover:text-gold"
-                  }`}
-                >
-                  {l.label}
+            {!paymentRequired ? (
+              links.map((l) => {
+                const active = pathname === l.href;
+                return (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`group relative text-sm font-medium transition-colors ${
+                      active ? "text-gold" : "text-white/90 hover:text-gold"
+                    }`}
+                  >
+                    {l.label}
 
-                  {/* Hover underline  grows from center */}
-                  <span
-                    className="pointer-events-none absolute -bottom-1.5 left-0 right-0 h-0.5 origin-center scale-x-0 rounded-full bg-gold transition-transform duration-300 ease-out group-hover:scale-x-100"
-                    aria-hidden="true"
-                  />
-
-                  {/* Active-page underline  slides between links */}
-                  {active && (
-                    <motion.span
-                      layoutId="nav-underline"
-                      className="absolute -bottom-1.5 left-0 right-0 h-0.5 rounded-full bg-gold"
+                    {/* Hover underline  grows from center */}
+                    <span
+                      className="pointer-events-none absolute -bottom-1.5 left-0 right-0 h-0.5 origin-center scale-x-0 rounded-full bg-gold transition-transform duration-300 ease-out group-hover:scale-x-100"
+                      aria-hidden="true"
                     />
-                  )}
-                </Link>
-              );
-            })}
+
+                    {/* Active-page underline  slides between links */}
+                    {active && (
+                      <motion.span
+                        layoutId="nav-underline"
+                        className="absolute -bottom-1.5 left-0 right-0 h-0.5 rounded-full bg-gold"
+                      />
+                    )}
+                  </Link>
+                );
+              })
+            ) : (
+              <span className="text-sm font-medium text-white/90">
+                <ShieldAlert className="mr-1.5 h-4 w-4" /> Payment Required
+              </span>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -204,27 +222,42 @@ export default function Navbar() {
                 </motion.div>
 
                 <nav className="flex flex-col gap-1">
-                  {links.map((l, i) => {
-                    const active = pathname === l.href;
-                    return (
-                      <motion.div
-                        key={l.href}
-                        custom={i}
-                        variants={itemVariants}
-                        initial="hidden"
-                        animate="visible"
-                        exit="exit"
-                      >
-                        <Link
-                          href={l.href}
-                          className={`group flex items-center justify-between rounded-2xl px-4 py-4 text-lg font-semibold transition-colors ${active ? "bg-gold/15 text-gold" : "text-white hover:bg-white/5 hover:text-gold"}`}
+                  {!paymentRequired ? (
+                    links.map((l, i) => {
+                      const active = pathname === l.href;
+                      return (
+                        <motion.div
+                          key={l.href}
+                          custom={i}
+                          variants={itemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          exit="exit"
                         >
-                          {l.label}
-                          <span className={`transition-transform duration-300 group-hover:translate-x-1 ${active ? "text-gold" : "text-white/40"}`}></span>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
+                          <Link
+                            href={l.href}
+                            className={`group flex items-center justify-between rounded-2xl px-4 py-4 text-lg font-semibold transition-colors ${active ? "bg-gold/15 text-gold" : "text-white hover:bg-white/5 hover:text-gold"}`}
+                          >
+                            {l.label}
+                            <span className={`transition-transform duration-300 group-hover:translate-x-1 ${active ? "text-gold" : "text-white/40"}`}></span>
+                          </Link>
+                        </motion.div>
+                      );
+                    })
+                  ) : (
+                    <motion.div
+                      custom={0}
+                      variants={itemVariants}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                    >
+                      <div className="flex items-center justify-between rounded-2xl px-4 py-4 text-lg font-semibold bg-gold/10 text-gold">
+                        Payment Required
+                        <ShieldAlert className="h-4 w-4" />
+                      </div>
+                    </motion.div>
+                  )}
                 </nav>
 
                 <motion.div
